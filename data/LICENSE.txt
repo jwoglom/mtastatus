@@ -1,0 +1,1 @@
+The stops.txt file is obtained from the New York City MTA website: http://web.mta.info/developers/data/nyct/subway/google_transit.zip

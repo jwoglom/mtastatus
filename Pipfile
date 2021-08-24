@@ -8,9 +8,13 @@ verify_ssl = true
 [packages]
 underground = "*"
 flask = "*"
+flask-cors = "*"
+sourcemap = "*"
+bs4 = "*"
+pyjson5 = "*"
 
 [requires]
 python_version = "3.9"
 
 [scripts]
-mtastatus = "flask run"
+mtastatus = "python3 app.py"

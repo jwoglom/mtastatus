@@ -125,7 +125,6 @@ def get_lines(lines):
                 "station": stations.get(s),
                 "stops": [{"time": str(dt["time"]), "trip": dt["trip"]} for dt in stop_dict[l][s]]
             }
-    
     return stops
 
 @app.route('/api/lines/<path:lines>')
@@ -142,17 +141,23 @@ def process_stations(stations):
             new.append(s)
     return new
 
-def get_stations(lines, stations):
+def get_stations(lines, sts):
     stops = get_lines(lines)
     data = {}
     for l in stops:
         for s in stops[l]:
-            if s in stations:
+            if s in sts:
                 print(stops[l][s])
                 if not s in data:
                     data[s] = stops[l][s]
                 else:
                     data[s]['stops'] = sort_stops(data[s]['stops'] + stops[l][s]['stops'])
+    for s in sts:
+        if s not in data:
+            data[s] = {
+                "station": stations.get(s),
+                "stops": []
+            }
     return data
 
 def sort_stops(stops):

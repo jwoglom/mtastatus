@@ -20,8 +20,9 @@ export default class StationInfo extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (!prevState.name && this.props.stationData) {
+        if (JSON.stringify(this.props.stationData) != JSON.stringify(prevProps.stationData)) {
             this.setState(this.props.stationData);
+            console.debug("updated stationInfo for "+this.state.name+": "+this.state.updateTime);
         }
 
     }

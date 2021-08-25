@@ -22,21 +22,26 @@ export default class StationsGroup extends React.Component {
     async loadData() {
         let stations = this.props.stations.split(",");
         let info = await fetchStationInfo(stations);
+        console.debug("setting sessionData:", info);
         this.setState({stationData: info});
     }
 
     render() {
         let stations = this.props.stations.split(",");
         return (
-            <div className="stations-group">
-                {stations.map(s => 
-                    <StationInfo 
-                        stationData={this.state.stationData[s] ? 
-                            this.state.stationData[s] : 
-                            mergeStationInfo(s, this.state.stationData)} 
-                        key={s}>
-                        </StationInfo>
-                )}
+            <div>
+                <div className="stations-group">
+                    {stations.map(s => 
+                        <StationInfo 
+                            stationData={this.state.stationData[s] ? 
+                                this.state.stationData[s] : 
+                                mergeStationInfo(s, this.state.stationData)} 
+                            key={s}>
+                            </StationInfo>
+                    )}
+
+                </div>
+                <button onClick={() => this.loadData()}>Refresh</button>
             </div>
         )
     }

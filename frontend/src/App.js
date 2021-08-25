@@ -1,12 +1,12 @@
 import logo from './logo.svg';
 import './App.css';
 
-import StationInfo from './components/StationInfo.js';
+import StationsGroup from './components/StationsGroup.js';
 
 function App() {
   return (
     <div className="App">
-      <StationInfo line="R" station="R32N"></StationInfo>
+      <StationsGroup stations="R32N,A32S"></StationsGroup>
     </div>
   );
 }

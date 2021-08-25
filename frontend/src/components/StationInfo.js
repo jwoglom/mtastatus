@@ -9,15 +9,23 @@ export default class StationInfo extends React.Component {
     }
 
     async componentDidMount() {
+        this.loadData();
+        this.timer = setInterval(this.loadData.bind(this), 20000);
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.timer);
+    }
+
+    async loadData() {
         const station = this.props.station;
-        const line = this.props.line;
 
         const endpoint = process.env.REACT_APP_MTASTATUS_ENDPOINT;
-        const req = await fetch(endpoint+'/api/lines/'+line+'/stations/'+station);
+        const req = await fetch(endpoint+'/api/stations/'+station);
         const data = await req.json();
         
         const stops = data[station]["stops"];
-        
+        const date = ""+new Date();
         this.setState({
             name: data[station]["station"]["name"],
             direction: data[station]["station"]["direction"],
@@ -25,6 +33,7 @@ export default class StationInfo extends React.Component {
             routes: data[station]["station"]["routes"],
             displayedRoutes: new Set(),
             stops: stops,
+            updateTime: date
         });
 
         this.updateDisplayedRoutes();
@@ -51,10 +60,11 @@ export default class StationInfo extends React.Component {
                     routes={this.state.routes}
                     displayedRoutes={this.state.displayedRoutes}
                 ></StationHeader>
-                <h3>line: {this.props.line} station: {this.props.station}</h3>
+                <h3>station: {this.props.station}</h3>
                 <h3>{this.state.stops.map(stop => <div key={stop["time"]}>
                     {stop["time"]} ({stop["trip"]["route_id"]})
                 </div>)}</h3>
+                <h4>Last updated: {this.state.updateTime}</h4>
             </div>
         )
     }

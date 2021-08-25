@@ -1,13 +1,35 @@
 import React from "react";
+import fetchStationInfo from "../utils/fetchStationInfo.js";
 import StationInfo from "./StationInfo.js";
 
 export default class StationsGroup extends React.Component {
+    state = {
+        stationData: {},
+    }
+
+    async componentDidMount() {
+        this.loadData();
+        this.timer = setInterval(this.loadData.bind(this), 20000);
+    }
+
+    componentWillUnmount() {
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
+    }
+
+    async loadData() {
+        let stations = this.props.stations.split(",");
+        let info = await fetchStationInfo(stations);
+        this.setState({stationData: info});
+    }
+
     render() {
-        console.log(this.props);
+        let stations = this.props.stations.split(",");
         return (
             <div class="stations-group">
-                {this.props.stations.split(",").map(s => 
-                    <StationInfo station={s}></StationInfo>
+                {stations.map(s => 
+                    <StationInfo stationData={this.state.stationData[s]}></StationInfo>
                 )}
             </div>
         )

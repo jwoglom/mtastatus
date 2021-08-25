@@ -113,7 +113,6 @@ def get_lines(lines):
 
     stop_dict = {}
     for l in grps:
-        print("get(",l)
         feed = SubwayFeed.get(l[0])
         stop_dict.update(extract_stop_dict(feed))
 
@@ -147,7 +146,6 @@ def get_stations(lines, sts):
     for l in stops:
         for s in stops[l]:
             if s in sts:
-                print(stops[l][s])
                 if not s in data:
                     data[s] = stops[l][s]
                 else:

@@ -1,60 +1,50 @@
 import React from "react";
+
+import fetchStationInfo from "../utils/fetchStationInfo.js";
 import StationHeader from "./StationHeader.js";
 import StationStop from "./StationStop.js";
 
 export default class StationInfo extends React.Component {
     state = {
-        name: null,
-        direction: null,
         stops: []
     }
 
     async componentDidMount() {
-        this.loadData();
-        this.timer = setInterval(this.loadData.bind(this), 20000);
+        if (this.props.station) {
+            this.loadData();
+            this.timer = setInterval(this.loadData.bind(this), 20000);
+        } else if (this.props.stationData) {
+            this.setState(this.props.stationData);
+        }
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        if (!prevState.name && this.props.stationData) {
+            this.setState(this.props.stationData);
+        }
+
     }
 
     componentWillUnmount() {
-        clearInterval(this.timer);
+        if (this.timer) {
+            clearInterval(this.timer);
+        }
     }
 
     async loadData() {
         const station = this.props.station;
 
-        const endpoint = process.env.REACT_APP_MTASTATUS_ENDPOINT;
-        const req = await fetch(endpoint+'/api/stations/'+station);
-        const data = await req.json();
-        console.log(data);
-
-        const stops = data[station]["stops"];
-        const date = (""+new Date()).split(" ")[4];
-        this.setState({
-            name: data[station]["station"]["name"],
-            direction: data[station]["station"]["direction"],
-            destination: data[station]["station"]["destination"],
-            routes: data[station]["station"]["routes"],
-            displayedRoutes: new Set(),
-            stops: stops,
-            updateTime: date
-        });
-
-        this.updateDisplayedRoutes();
+        let info = await fetchStationInfo(station);
+        this.setState(info[station]);
     }
-
-    updateDisplayedRoutes() {
-        let displayedRoutes = new Set();
-        this.state.stops.forEach((stop, i) => {
-            displayedRoutes.add(stop["trip"]["route_id"]);
-        });
-        this.setState({
-            displayedRoutes: displayedRoutes
-        })
-    }
-
 
     render() {
+        if (!this.state.name) {
+            return (<div>Loading...</div>);
+        }
         return (
             <div class="station-info">
+                
                 <StationHeader
                     name={this.state.name}
                     direction={this.state.direction}
@@ -73,8 +63,13 @@ export default class StationInfo extends React.Component {
                     There are no trains scheduled.
                 </p>}
 
-                <p>Last updated: {this.state.updateTime}</p>
+                {this.props.showLastUpdated &&
+                    <p>Last updated: {this.state.updateTime}</p>}
             </div>
         )
     }
+};
+
+StationInfo.defaultProps = {
+    showLastUpdated: true
 }

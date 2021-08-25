@@ -1,6 +1,7 @@
 import React from "react";
 
 import {fetchStationInfo, makeDisplayedRoutes} from "../utils/fetchStationInfo.js";
+import mergeStationInfo from "../utils/mergeStationInfo.js";
 import StationHeader from "./StationHeader.js";
 import StationStop from "./StationStop.js";
 
@@ -31,29 +32,6 @@ export default class StationInfo extends React.Component {
         }
     }
 
-    mergeStation(station, info) {
-        let north = info[station+"N"];
-        let south = info[station+"S"];
-        let stops = [];
-        north.stops.map(stop => {
-            stop["title"] = north.destination;
-            stops.push(stop);
-        });
-        south.stops.map(stop => {
-            stop["title"] = south.destination;
-            stops.push(stop);
-        });
-        stops.sort((a, b) => new Date(a["time"]) - new Date(b["time"]));
-        return {
-            name: north.name,
-            direction: "",
-            destination: north.destination+" / "+south.destination,
-            routes: north.routes,
-            displayedRoutes: north.displayedRoutes,
-            stops: stops
-        };
-    }
-
     async loadData() {
         const station = this.props.station;
 
@@ -61,7 +39,7 @@ export default class StationInfo extends React.Component {
         if (info[station]) {
             this.setState(info[station]);
         } else {
-            this.setState(this.mergeStation(station, info));
+            this.setState(mergeStationInfo(station, info));
         }
     }
 

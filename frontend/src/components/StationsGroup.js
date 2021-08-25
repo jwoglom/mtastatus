@@ -1,5 +1,6 @@
 import React from "react";
 import {fetchStationInfo} from "../utils/fetchStationInfo.js";
+import mergeStationInfo from "../utils/mergeStationInfo.js";
 import StationInfo from "./StationInfo.js";
 
 export default class StationsGroup extends React.Component {
@@ -29,7 +30,12 @@ export default class StationsGroup extends React.Component {
         return (
             <div className="stations-group">
                 {stations.map(s => 
-                    <StationInfo stationData={this.state.stationData[s]} key={s}></StationInfo>
+                    <StationInfo 
+                        stationData={this.state.stationData[s] ? 
+                            this.state.stationData[s] : 
+                            mergeStationInfo(s, this.state.stationData)} 
+                        key={s}>
+                        </StationInfo>
                 )}
             </div>
         )

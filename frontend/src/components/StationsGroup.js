@@ -1,5 +1,5 @@
 import React from "react";
-import fetchStationInfo from "../utils/fetchStationInfo.js";
+import {fetchStationInfo} from "../utils/fetchStationInfo.js";
 import StationInfo from "./StationInfo.js";
 
 export default class StationsGroup extends React.Component {
@@ -27,9 +27,9 @@ export default class StationsGroup extends React.Component {
     render() {
         let stations = this.props.stations.split(",");
         return (
-            <div class="stations-group">
+            <div className="stations-group">
                 {stations.map(s => 
-                    <StationInfo stationData={this.state.stationData[s]}></StationInfo>
+                    <StationInfo stationData={this.state.stationData[s]} key={s}></StationInfo>
                 )}
             </div>
         )

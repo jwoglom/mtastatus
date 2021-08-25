@@ -1,6 +1,6 @@
 import React from "react";
 
-import fetchStationInfo from "../utils/fetchStationInfo.js";
+import {fetchStationInfo, makeDisplayedRoutes} from "../utils/fetchStationInfo.js";
 import StationHeader from "./StationHeader.js";
 import StationStop from "./StationStop.js";
 
@@ -31,11 +31,38 @@ export default class StationInfo extends React.Component {
         }
     }
 
+    mergeStation(station, info) {
+        let north = info[station+"N"];
+        let south = info[station+"S"];
+        let stops = [];
+        north.stops.map(stop => {
+            stop["title"] = north.destination;
+            stops.push(stop);
+        });
+        south.stops.map(stop => {
+            stop["title"] = south.destination;
+            stops.push(stop);
+        });
+        stops.sort((a, b) => new Date(a["time"]) - new Date(b["time"]));
+        return {
+            name: north.name,
+            direction: "",
+            destination: north.destination+" / "+south.destination,
+            routes: north.routes,
+            displayedRoutes: north.displayedRoutes,
+            stops: stops
+        };
+    }
+
     async loadData() {
         const station = this.props.station;
 
-        let info = await fetchStationInfo(station);
-        this.setState(info[station]);
+        let info = await fetchStationInfo([station]);
+        if (info[station]) {
+            this.setState(info[station]);
+        } else {
+            this.setState(this.mergeStation(station, info));
+        }
     }
 
     render() {
@@ -43,7 +70,7 @@ export default class StationInfo extends React.Component {
             return (<div>Loading...</div>);
         }
         return (
-            <div class="station-info">
+            <div className="station-info">
                 
                 <StationHeader
                     name={this.state.name}
@@ -53,7 +80,7 @@ export default class StationInfo extends React.Component {
                     displayedRoutes={this.state.displayedRoutes}
                 ></StationHeader>
                 
-                <div class="station-stops">
+                <div className="station-stops">
                     {this.state.stops.map(stop => 
                         <StationStop stop={stop} key={stop["trip"]["trip_id"]}></StationStop>
                     )}

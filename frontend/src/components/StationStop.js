@@ -53,9 +53,12 @@ export default class StationStop extends React.Component {
                     width="20" 
                     alt={stop["trip"]["route_id"]} 
                     className="bullet" />
-                <span class="time">
+                <span className="time">
                     <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>
                 </span>
+                {stop["title"] && <span className="title">
+                    {stop["title"]}
+                </span>}
             </div>
         )
     }

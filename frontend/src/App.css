@@ -1,7 +1,7 @@
 .stations-group {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-evenly;
   margin: 0 25px;
 }
 
@@ -41,4 +41,9 @@
 .station-stop .time {
   margin-left: 8px;
   font-size: 20px;
+}
+
+.station-stop .title {
+  position: absolute;
+  left: 190px;
 }

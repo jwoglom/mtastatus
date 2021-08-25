@@ -20,6 +20,8 @@ destinations = json.loads(open("data/destinations.json").read())
 # from destinations import build_destinations_map
 # destinations = build_destinations_list()
 
+linegroups = ("ACE", "BDFM", "G", "JZ", "NQRW", "L", "1234567", ["SIR"])
+
 def build_stations_map():
     stations = {}
     textfile = open("data/stops.txt")
@@ -103,9 +105,16 @@ def extract_stop_dict(self, timezone=metadata.DEFAULT_TIMEZONE):
     return stops_grouped
 
 def get_lines(lines):
-    stop_dict = {}
+    grps = set()
     for l in lines:
-        feed = SubwayFeed.get(l)
+        for lg in linegroups:
+            if l in lg:
+                grps.add(''.join(list(lg)))
+
+    stop_dict = {}
+    for l in grps:
+        print("get(",l)
+        feed = SubwayFeed.get(l[0])
         stop_dict.update(extract_stop_dict(feed))
 
     stops = {}
@@ -123,8 +132,7 @@ def get_lines(lines):
 def api_lines_route(lines):
     return jsonify(get_lines(lines.split(',')))
 
-def get_stations(lines, stations):
-    print(lines, stations)
+def process_stations(stations):
     new = []
     for s in stations:
         if not s.endswith('N') and not s.endswith('S'):
@@ -132,8 +140,9 @@ def get_stations(lines, stations):
             new.append(s+'S')
         else:
             new.append(s)
-    stations = new
+    return new
 
+def get_stations(lines, stations):
     stops = get_lines(lines)
     data = {}
     for l in stops:
@@ -150,8 +159,25 @@ def sort_stops(stops):
     return sorted(stops, key=lambda s: s['time'])
 
 @app.route('/api/lines/<path:lines>/stations/<path:stations>')
-def api_stations_route(lines, stations):
-    return jsonify(get_stations(lines.split(','), stations.split(',')))
+def api_line_stations_route(lines, stations):
+    sts = process_stations(stations.split(','))
+    return jsonify(get_stations(lines.split(','), sts))
+
+def get_inferred_lines(sts):
+    lines = set()
+    for s in sts:
+        st = stations.get(s)
+        if st:
+            for r in st["routes"]:
+                lines.add(r)
+    
+    return lines
+
+@app.route('/api/stations/<path:stations>')
+def api_stations_route(stations):
+    sts = process_stations(stations.split(','))
+    inferred_lines = get_inferred_lines(sts)
+    return jsonify(get_stations(inferred_lines, sts))
 
 @app.route('/')
 def index_route():

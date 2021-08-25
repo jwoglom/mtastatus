@@ -54,7 +54,7 @@ export default class StationInfo extends React.Component {
 
     render() {
         return (
-            <div>
+            <div class="station-info">
                 <StationHeader
                     name={this.state.name}
                     direction={this.state.direction}
@@ -63,15 +63,17 @@ export default class StationInfo extends React.Component {
                     displayedRoutes={this.state.displayedRoutes}
                 ></StationHeader>
                 
-                <h3>{this.state.stops.map(stop => 
-                    <StationStop stop={stop} key={stop["trip"]["trip_id"]}></StationStop>
-                )}</h3>
+                <div class="station-stops">
+                    {this.state.stops.map(stop => 
+                        <StationStop stop={stop} key={stop["trip"]["trip_id"]}></StationStop>
+                    )}
+                </div>
                 
                 {this.state.stops.length == 0 && <p>
                     There are no trains scheduled.
                 </p>}
 
-                <h4>Last updated: {this.state.updateTime}</h4>
+                <p>Last updated: {this.state.updateTime}</p>
             </div>
         )
     }

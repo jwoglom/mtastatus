@@ -5,7 +5,7 @@ export default class StationsGroup extends React.Component {
     render() {
         console.log(this.props);
         return (
-            <div>
+            <div class="stations-group">
                 {this.props.stations.split(",").map(s => 
                     <StationInfo station={s}></StationInfo>
                 )}

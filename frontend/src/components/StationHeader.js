@@ -18,12 +18,17 @@ export default class StationHeader extends React.Component {
 
         return (
             <h1>
-                {name} ({destination})
-                <span>
+                <div className="header-name">
+                    {name}
+                </div>
+                <span className="header-routes">
                     {(routes||[]).map((route, i) =>
-                        displayedRoutes.has(route) && <img src={this.imgBase+route+".svg"} width="20" alt={route} key={route} className={displayedRoutes.has(route) ? 'displayed': 'notDisplayed'} />)}
+                        displayedRoutes.has(route) && <img src={this.imgBase+route+".svg"} width="20" alt={route} key={route} className={"bullet " + displayedRoutes.has(route) ? 'displayed': 'notDisplayed'} />)}
                     {(routes||[]).map((route, i) =>
-                        !displayedRoutes.has(route) && <img src={this.imgBase+route+".svg"} width="20" alt={route} key={route} className={displayedRoutes.has(route) ? 'displayed': 'notDisplayed'} />)}
+                        !displayedRoutes.has(route) && <img src={this.imgBase+route+".svg"} width="20" alt={route} key={route} className={"bullet " + displayedRoutes.has(route) ? 'displayed': 'notDisplayed'} />)}
+                </span>
+                <span className="header-dest">
+                    {destination}
                 </span>
             </h1>
         )

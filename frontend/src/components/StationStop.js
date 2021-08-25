@@ -47,9 +47,15 @@ export default class StationStop extends React.Component {
         const stop = this.props.stop;
 
         return (
-            <div>
-                <img src={this.imgBase+stop["trip"]["route_id"]+".svg"} width="20" alt={stop["trip"]["route_id"]} />
-                <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>
+            <div className="station-stop">
+                <img 
+                    src={this.imgBase+stop["trip"]["route_id"]+".svg"} 
+                    width="20" 
+                    alt={stop["trip"]["route_id"]} 
+                    className="bullet" />
+                <span class="time">
+                    <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>
+                </span>
             </div>
         )
     }

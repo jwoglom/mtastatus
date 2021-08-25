@@ -6,7 +6,7 @@ import StationsGroup from './components/StationsGroup.js';
 function App() {
   return (
     <div className="App">
-      <StationsGroup stations="R32N,A32S"></StationsGroup>
+      <StationsGroup stations="R32N,F21N,F21S,A32S"></StationsGroup>
     </div>
   );
 }

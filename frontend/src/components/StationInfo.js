@@ -1,5 +1,6 @@
 import React from "react";
 import StationHeader from "./StationHeader.js";
+import StationStop from "./StationStop.js";
 
 export default class StationInfo extends React.Component {
     state = {
@@ -23,9 +24,10 @@ export default class StationInfo extends React.Component {
         const endpoint = process.env.REACT_APP_MTASTATUS_ENDPOINT;
         const req = await fetch(endpoint+'/api/stations/'+station);
         const data = await req.json();
-        
+        console.log(data);
+
         const stops = data[station]["stops"];
-        const date = ""+new Date();
+        const date = (""+new Date()).split(" ")[4];
         this.setState({
             name: data[station]["station"]["name"],
             direction: data[station]["station"]["direction"],
@@ -60,10 +62,15 @@ export default class StationInfo extends React.Component {
                     routes={this.state.routes}
                     displayedRoutes={this.state.displayedRoutes}
                 ></StationHeader>
-                <h3>station: {this.props.station}</h3>
-                <h3>{this.state.stops.map(stop => <div key={stop["time"]}>
-                    {stop["time"]} ({stop["trip"]["route_id"]})
-                </div>)}</h3>
+                
+                <h3>{this.state.stops.map(stop => 
+                    <StationStop stop={stop} key={stop["trip"]["trip_id"]}></StationStop>
+                )}</h3>
+                
+                {this.state.stops.length == 0 && <p>
+                    There are no trains scheduled.
+                </p>}
+
                 <h4>Last updated: {this.state.updateTime}</h4>
             </div>
         )

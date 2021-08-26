@@ -2,7 +2,7 @@ import React from "react";
 import {withRouter} from "react-router-dom";
 import StationsGroup from "./StationsGroup.js";
 
-const DEFAULT_STATIONS = "A41N,A32,D20";
+const DEFAULT_STATIONS = "A41;A32N,D20N";
 
 class MtaStatusHome extends React.Component {
     render() {

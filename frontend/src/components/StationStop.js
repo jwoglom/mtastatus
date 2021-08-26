@@ -52,6 +52,7 @@ export default class StationStop extends React.Component {
                     src={this.imgBase+stop["trip"]["route_id"]+".svg"} 
                     width="20" 
                     alt={stop["trip"]["route_id"]} 
+                    valign="middle" 
                     className="bullet" />
                 <span className="time">
                     <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>

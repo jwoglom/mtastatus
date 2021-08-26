@@ -2,7 +2,7 @@ export default function mergeStationInfo(station, info) {
     if (!info || Object.keys(info).length == 0) {
         return undefined;
     }
-    
+
     let north = info[station+"N"];
     let south = info[station+"S"];
     if (!north || !south) {
@@ -27,6 +27,7 @@ export default function mergeStationInfo(station, info) {
         destination: north.destination+" / "+south.destination,
         routes: north.routes,
         displayedRoutes: north.displayedRoutes,
-        stops: stops
+        stops: stops,
+        updateTime: north.updateTime
     };
 }

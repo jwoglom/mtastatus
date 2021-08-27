@@ -1,5 +1,5 @@
 export default function mergeStationInfo(station, info) {
-    if (!info || Object.keys(info).length == 0) {
+    if (!info || Object.keys(info).length === 0) {
         return undefined;
     }
 

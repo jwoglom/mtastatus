@@ -113,7 +113,10 @@ def get_lines(lines):
 
     stop_dict = {}
     for l in grps:
-        feed = SubwayFeed.get(l[0])
+        try:
+            feed = SubwayFeed.get(l[0])
+        except ValueError as e:
+            raise RuntimeError('Have you specified MTA_API_KEY?') from e
         stop_dict.update(extract_stop_dict(feed))
 
     stops = {}

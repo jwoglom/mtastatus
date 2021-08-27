@@ -12,6 +12,7 @@ flask-cors = "*"
 sourcemap = "*"
 bs4 = "*"
 pyjson5 = "*"
+python-dotenv = "*"
 
 [requires]
 python_version = "3.9"

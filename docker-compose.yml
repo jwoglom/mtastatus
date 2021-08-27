@@ -1,0 +1,20 @@
+services:
+  mtastatus-frontend:
+    build:
+      context: frontend/
+      args:
+        - NODE_ENV=local
+        - REACT_APP_MTASTATUS_HOME_STATIONS=${REACT_APP_MTASTATUS_HOME_STATIONS}
+        - REACT_APP_MTASTATUS_ENDPOINT=http://mtastatus-backend:8400
+    ports:
+      - "3000:3000"
+
+  mtastatus-backend:
+    build:
+      context: .
+      args:
+        - MTA_API_KEY=${MTA_API_KEY}
+    ports:
+      - "8400:8400"
+
+      

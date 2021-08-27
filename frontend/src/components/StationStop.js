@@ -8,28 +8,28 @@ export default class StationStop extends React.Component {
 
     formatter(value, unit, suffix, epochMilliseconds) {
         function inner() {
-            if (unit == 'second') {
+            if (unit === 'second') {
                 return '<1 minute';
             }
 
             suffix = '';
-            if (unit == 'hour') {
+            if (unit === 'hour') {
                 let totalMins = parseInt((epochMilliseconds - +new Date())/60000);
                 let hrs = parseInt(totalMins / 60);
                 let addlMins = totalMins - hrs*60;
                 let ret = '';
-                if (hrs == 1) {
+                if (hrs === 1) {
                     ret = hrs+' '+unit+' '+addlMins+' min';
                 } else {
                     ret = hrs+' '+unit+'s '+addlMins+' min';
                 }
-                if (addlMins != 1) {
+                if (addlMins !== 1) {
                     ret += 's';
                 }
                 return ret;
             }
 
-            if (value == 1) {
+            if (value === 1) {
                 return value+' '+unit+suffix;
             }
             return value+' '+unit+'s';

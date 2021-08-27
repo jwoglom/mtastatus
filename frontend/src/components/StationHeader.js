@@ -39,7 +39,7 @@ export default class StationHeader extends React.Component {
                             valign="middle" 
                             className={"bullet " + displayedRoutes.has(route) ? 'displayed': 'notDisplayed'} />)}
                 </span>
-                <span className="header-dest">
+                <span className={"header-dest "+direction}>
                     {destination}
                 </span>
             </h1>

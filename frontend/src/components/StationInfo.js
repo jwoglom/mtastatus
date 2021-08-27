@@ -1,6 +1,6 @@
 import React from "react";
 
-import {fetchStationInfo, makeDisplayedRoutes} from "../utils/fetchStationInfo.js";
+import {fetchStationInfo} from "../utils/fetchStationInfo.js";
 import mergeStationInfo from "../utils/mergeStationInfo.js";
 import StationHeader from "./StationHeader.js";
 import StationStop from "./StationStop.js";
@@ -20,7 +20,7 @@ export default class StationInfo extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (JSON.stringify(this.props.stationData) != JSON.stringify(prevProps.stationData)) {
+        if (JSON.stringify(this.props.stationData) !== JSON.stringify(prevProps.stationData)) {
             this.setState(this.props.stationData);
             console.debug("updated stationInfo for "+this.state.name+": "+this.state.updateTime);
         }
@@ -77,7 +77,7 @@ export default class StationInfo extends React.Component {
                     )}
                 </div>
                 
-                {this.state.stops.length == 0 && <p>
+                {this.state.stops.length === 0 && <p>
                     There are no trains scheduled.
                 </p>}
 

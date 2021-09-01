@@ -13,6 +13,8 @@ sourcemap = "*"
 bs4 = "*"
 pyjson5 = "*"
 python-dotenv = "*"
+gunicorn = "*"
+eventlet = "*"
 
 [requires]
 python_version = "3.9"

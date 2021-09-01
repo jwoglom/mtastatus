@@ -14,7 +14,7 @@ bs4 = "*"
 pyjson5 = "*"
 python-dotenv = "*"
 gunicorn = "*"
-eventlet = "*"
+eventlet = "==0.30.2"
 
 [requires]
 python_version = "3.9"

@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 
-from flask import Flask, Response, request, abort, render_template, jsonify
+from flask import Flask, Response, request, abort, render_template, jsonify, send_from_directory
 from flask_cors import CORS
 from underground import SubwayFeed, metadata
 
 import csv
 import json
+import os
 
-app = Flask(__name__, static_url_path='/static')
+app = Flask(__name__, static_folder='frontend/build')
 CORS(app)
 
 # Log messages with Gunicorn
@@ -185,10 +186,13 @@ def api_stations_route(stations):
     inferred_lines = get_inferred_lines(sts)
     return jsonify(get_stations(inferred_lines, sts))
 
-@app.route('/')
-def index_route():
-    stations = request.args.getlist("station")
-    return render_template("index.html", stations=stations)
+@app.route('/', defaults={'path': ''})
+@app.route('/<path:path>')
+def serve(path):
+    if path != "" and os.path.exists(app.static_folder + '/' + path):
+        return send_from_directory(app.static_folder, path)
+    else:
+        return send_from_directory(app.static_folder, 'index.html')
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=8400)

@@ -45,11 +45,22 @@ export default class StationHeader extends React.Component {
 
         return (
             <h1>
-                <div className="header-name">
-                    {name}
-                </div>
                 {dualDirection && <>
+                    {typeof name === 'string' && <div className="header-name">
+                        {name}
+                    </div>}
                     <div className="header-dest-dual">
+                        {typeof name !== 'string' && <>
+                            <div className="header-name">
+                                {name[0]}
+                                <br /><br />
+                            </div>
+
+                            <div className="header-name">
+                                {name[1]}
+                                <br /><br />
+                            </div>
+                        </>}
                         <div className={"header-dest "+direction}>
                             {this.dashToNewline(destination[0])}
                         </div>
@@ -67,6 +78,9 @@ export default class StationHeader extends React.Component {
                 </>}
 
                 {!dualDirection && <>
+                    <div className="header-name">
+                        {name}
+                    </div>
                     {this.renderRoutes(routes, displayedRoutes)}
                     <span className={"header-dest "+direction}>
                         {destination}

@@ -99,7 +99,11 @@ export default class DualStationInfo extends React.Component {
         if (!this.state.nb || !this.state.sb) {
             return null;
         }
-        return this.state.nb.name || this.state.sb.name;
+        if (this.state.nb.name === this.state.sb.name) {
+            return this.state.nb.name;
+        }
+
+        return [this.state.nb.name, this.state.sb.name];
     }
 
     filterToShownStops(stops) {
@@ -113,19 +117,19 @@ export default class DualStationInfo extends React.Component {
 
         let min = Math.min(nbStops.length, sbStops.length);
         for (let i=0; i<min; i++) {
-            stops.push({stop: nbStops[i], direction: 'nb'});
-            stops.push({stop: sbStops[i], direction: 'sb'});
+            stops.push({stop: nbStops[i], direction: this.state.nb.direction});
+            stops.push({stop: sbStops[i], direction: this.state.sb.direction});
         }
 
         if (nbStops.length > sbStops.length) {
             for (let i=min; i<nbStops.length; i++) {
-                stops.push({stop: nbStops[i], direction: 'nb'});
+                stops.push({stop: nbStops[i], direction: this.state.nb.direction});
                 stops.push({padding: true});
             }
         } else if (sbStops > nbStops.length) {
             for (let i=min; i<sbStops.length; i++) {
                 stops.push({padding: true});
-                stops.push({stop: sbStops[i], direction: 'sb'});
+                stops.push({stop: sbStops[i], direction: this.state.sb.direction});
             }
         }
 

@@ -45,9 +45,9 @@ export default class StationStop extends React.Component {
     }
 
     directionLabel(direction) {
-        if (direction === 'nb') {
+        if (direction === 'N') {
             return '↑';
-        } else if (direction === 'sb') {
+        } else if (direction === 'S') {
             return '↓';
         }
         return '';

@@ -1,9 +1,9 @@
 import React from "react";
 
-import {fetchStationInfo} from "../utils/fetchStationInfo.js";
-import mergeStationInfo from "../utils/mergeStationInfo.js";
-import StationHeader from "./StationHeader.js";
-import StationStop from "./StationStop.js";
+import {fetchStationInfo} from "../utils/fetchStationInfo";
+import mergeStationInfo from "../utils/mergeStationInfo";
+import StationHeader from "./StationHeader";
+import StationStop from "./StationStop";
 
 export default class StationInfo extends React.Component {
     state = {

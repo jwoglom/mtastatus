@@ -44,11 +44,27 @@ export default class StationStop extends React.Component {
 
     }
 
+    directionLabel(direction) {
+        if (direction === 'nb') {
+            return '↑';
+        } else if (direction === 'sb') {
+            return '↓';
+        }
+        return '';
+    }
+
     render() {
+        const hidden = this.props.hidden;
         const stop = this.props.stop;
+        const direction = this.props.direction;
+
+        if (hidden) {
+            return (<div className="station-stop hidden"></div>);
+        }
 
         return (
             <div className="station-stop">
+                {direction && this.directionLabel(direction)}
                 <RouteIcon route_id={stop["trip"]["route_id"]} />
                 <span className="time">
                     <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>

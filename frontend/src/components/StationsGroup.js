@@ -1,7 +1,8 @@
 import React from "react";
-import {fetchStationInfo} from "../utils/fetchStationInfo.js";
-import mergeStationInfo from "../utils/mergeStationInfo.js";
-import StationInfo from "./StationInfo.js";
+import {fetchStationInfo} from "../utils/fetchStationInfo";
+import mergeStationInfo from "../utils/mergeStationInfo";
+import StationInfo from "./StationInfo";
+import DualStationInfo from "./DualStationInfo";
 
 export default class StationsGroup extends React.Component {
     state = {
@@ -20,10 +21,34 @@ export default class StationsGroup extends React.Component {
     }
 
     async loadData() {
-        let stations = this.props.stations.split(/;|,/);
-        let info = await fetchStationInfo(stations);
+        let individualStations = this.props.stations.split(/;|,|\|/);
+        let info = await fetchStationInfo(individualStations);
         console.debug("setting sessionData:", info);
         this.setState({stationData: info});
+    }
+
+    renderItemInGroup(s) {
+        if (!(s in this.state.stationData) && !s.endsWith('N') && !s.endsWith('S') && !this.props.showMergedStationView) {
+            s = s+'N|'+s+'S';
+        }
+
+        if (s.indexOf('|') > -1) {
+            let [nb, sb] = s.split('|');
+
+            return (
+                <DualStationInfo stationData={{
+                    nb: this.state.stationData[nb] ? this.state.stationData[nb] : mergeStationInfo(nb, this.state.stationData),
+                    sb: this.state.stationData[sb] ? this.state.stationData[sb] : mergeStationInfo(sb, this.state.stationData)
+                }} key={s} />
+            );
+        }
+        return (
+            <StationInfo 
+                stationData={this.state.stationData[s] ? 
+                    this.state.stationData[s] : 
+                    mergeStationInfo(s, this.state.stationData)} 
+                key={s} />
+        )
     }
 
     render() {
@@ -32,17 +57,14 @@ export default class StationsGroup extends React.Component {
             <div className="groups-container" onClick={this.loadData.bind(this)}>
                 {stationGroups.map(group =>
                     <div className="stations-group" key={group}>
-                        {group.split(",").map(s => 
-                            <StationInfo 
-                                stationData={this.state.stationData[s] ? 
-                                    this.state.stationData[s] : 
-                                    mergeStationInfo(s, this.state.stationData)} 
-                                key={s}>
-                                </StationInfo>
-                        )}
+                        {group.split(",").map(s => this.renderItemInGroup(s))}
                     </div>
                 )}
                 </div>
         )
     }
+}
+
+StationsGroup.defaultProps = {
+    showMergedStationView: false,
 }

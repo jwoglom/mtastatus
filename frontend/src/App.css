@@ -35,6 +35,10 @@
   opacity: 0.3;
 }
 
+.header-routes .bullet {
+  padding-right: 2px;
+}
+
 .station-stop {
   display: block;
   line-height: 28px;
@@ -48,7 +52,7 @@
 
 .station-stop .bullet {
   position: relative;
-  top: 3px;
+  top: -3px;
 }
 
 .station-stop .time {

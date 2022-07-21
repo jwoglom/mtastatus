@@ -31,7 +31,7 @@ export default class StationsGroup extends React.Component {
         return (
             <div className="groups-container" onClick={this.loadData.bind(this)}>
                 {stationGroups.map(group =>
-                    <div className="stations-group">
+                    <div className="stations-group" key={group}>
                         {group.split(",").map(s => 
                             <StationInfo 
                                 stationData={this.state.stationData[s] ? 

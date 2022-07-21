@@ -10,11 +10,13 @@ export default function mergeStationInfo(station, info) {
         return undefined;
     }
     let stops = [];
+    // eslint-disable-next-line
     north.stops.map(s => {
         let stop = Object.assign({}, s);
         stop["title"] = north.destination;
         stops.push(stop);
     });
+    // eslint-disable-next-line
     south.stops.map(s => {
         let stop = Object.assign({}, s);
         stop["title"] = south.destination;

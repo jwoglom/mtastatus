@@ -1,4 +1,7 @@
 import React from "react";
+import routeGroupSort from "../utils/routeGroupSort";
+
+import RouteIcon from "./RouteIcon";
 
 export default class StationHeader extends React.Component {
     imgBase = "https://new.mta.info/themes/custom/bootstrap_mta/images/icons/"
@@ -22,22 +25,12 @@ export default class StationHeader extends React.Component {
                     {name}
                 </div>
                 <span className="header-routes">
-                    {(routes||[]).map((route, i) =>
-                        displayedRoutes.has(route) && 
-                            <img src={this.imgBase+route+".svg"} 
-                                width="20" 
-                                alt={route} 
-                                key={i} 
-                                valign="middle" 
-                                className={"bullet " + displayedRoutes.has(route) ? 'displayed': 'notDisplayed'} />)}
-                    {(routes||[]).map((route, i) =>
+                    {routeGroupSort(routes||[]).map((route, i) =>
+                        displayedRoutes.has(route) &&
+                        <RouteIcon route_id={route} grayed_out={false} key={i} />)}
+                    {routeGroupSort(routes||[]).map((route, i) =>
                         !displayedRoutes.has(route) && 
-                            <img src={this.imgBase+route+".svg"}
-                            width="20" 
-                            alt={route} 
-                            key={i} 
-                            valign="middle" 
-                            className={"bullet " + displayedRoutes.has(route) ? 'displayed': 'notDisplayed'} />)}
+                        <RouteIcon route_id={route} grayed_out={true} key={i} />)}
                 </span>
                 <span className={"header-dest "+direction}>
                     {destination}

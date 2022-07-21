@@ -73,7 +73,7 @@ export default class StationInfo extends React.Component {
                 <div className="station-stops">
                     {this.state.stops.map((stop, i) => this.showStop.apply(this, [stop]) ?
                         <StationStop stop={stop} key={i}></StationStop>
-                        : <div></div>
+                        : <div key={i}></div>
                     )}
                 </div>
                 

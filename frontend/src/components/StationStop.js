@@ -1,8 +1,9 @@
 import React from "react";
 import TimeAgo from 'react-timeago';
+import RouteIcon from './RouteIcon';
 
 export default class StationStop extends React.Component {
-    imgBase = "https://new.mta.info/themes/custom/bootstrap_mta/images/icons/"
+    imgBase = "/route_icons/";
     async componentDidMount() {
     }
 
@@ -48,12 +49,7 @@ export default class StationStop extends React.Component {
 
         return (
             <div className="station-stop">
-                <img 
-                    src={this.imgBase+stop["trip"]["route_id"]+".svg"} 
-                    width="20" 
-                    alt={stop["trip"]["route_id"]} 
-                    valign="middle" 
-                    className="bullet" />
+                <RouteIcon route_id={stop["trip"]["route_id"]} />
                 <span className="time">
                     <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>
                 </span>

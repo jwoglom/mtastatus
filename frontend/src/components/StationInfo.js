@@ -44,7 +44,7 @@ export default class StationInfo extends React.Component {
         }
     }
 
-    showStop(stop) {
+    showStop(stop, i) {
         let time = new Date(stop["time"]);
         let minDiff = (time - new Date()) / 60000;
 
@@ -52,7 +52,19 @@ export default class StationInfo extends React.Component {
             return true;
         }
 
-        return (minDiff <= this.props.maxTimeMinutes);
+        if (minDiff > this.props.maxTimeMinutes) {
+            return false;
+        }
+
+        if (!this.props.maxCount) {
+            return true;
+        }
+
+        if (i > this.props.maxCount) {
+            return false;
+        }
+
+        return true;
     }
 
     render() {
@@ -71,7 +83,7 @@ export default class StationInfo extends React.Component {
                 ></StationHeader>
                 
                 <div className="station-stops">
-                    {this.state.stops.map((stop, i) => this.showStop.apply(this, [stop]) ?
+                    {this.state.stops.map((stop, i) => this.showStop.apply(this, [stop, i]) ?
                         <StationStop stop={stop} key={i}></StationStop>
                         : <div key={i}></div>
                     )}
@@ -90,5 +102,6 @@ export default class StationInfo extends React.Component {
 
 StationInfo.defaultProps = {
     showLastUpdated: true,
-    maxTimeMinutes: 60
+    maxTimeMinutes: 60,
+    maxCount: 10,
 }

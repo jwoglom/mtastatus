@@ -21,12 +21,11 @@ export default class DualStationInfo extends React.Component {
     async componentDidMount() {
         if (this.props.nbStation) {
             this.loadDataNB();
-            this.nbTimer = setInterval(this.loadData.bind(this, [this.props.nbStation]), 20000);
+            this.nbTimer = setInterval(this.loadDataNB.bind(this), 20000);
         }
         if (this.props.sbStation) {
             this.loadDataSB();
-            this.sbTimer = setInterval(this.loadData.bind(this, [this.props.sbStation]), 20000);
-
+            this.sbTimer = setInterval(this.loadDataSB.bind(this), 20000);
         }
         if (this.props.stationData) {
             this.setState(this.props.stationData);
@@ -54,22 +53,30 @@ export default class DualStationInfo extends React.Component {
     async loadDataNB() {
         const station = this.props.nbStation;
 
-        let info = await fetchStationInfo([station]);
-        if (info[station]) {
-            this.setState({nb: info[station]});
-        } else {
-            this.setState({nb: mergeStationInfo(station, info)});
+        try {
+            let info = await fetchStationInfo([station]);
+            if (info[station]) {
+                this.setState({...this.state, nb: info[station]});
+            } else {
+                this.setState({...this.state, nb: mergeStationInfo(station, info)});
+            }
+        } catch (e) {
+            this.setState({error: e});
         }
     }
 
     async loadDataSB() {
         const station = this.props.sbStation;
 
-        let info = await fetchStationInfo([station]);
-        if (info[station]) {
-            this.setState({sb: info[station], ...this.state});
-        } else {
-            this.setState({sb: mergeStationInfo(station, info), ...this.state});
+        try {
+            let info = await fetchStationInfo([station]);
+            if (info[station]) {
+                this.setState({...this.state, sb: info[station]});
+            } else {
+                this.setState({...this.state, sb: mergeStationInfo(station, info)});
+            }
+        } catch (e) {
+            this.setState({error: e});
         }
     }
 
@@ -121,6 +128,9 @@ export default class DualStationInfo extends React.Component {
 
     render() {
         console.log("state", this.state);
+        if (this.state.error) {
+            return (<div>Error: {this.state.error}</div>)
+        }
         if (!this.stationName()) {
             return (<div>Loading...</div>);
         }

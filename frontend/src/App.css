@@ -94,3 +94,9 @@
 .station-stop .title {
   white-space: nowrap;
 }
+
+.bottom-lastupdated {
+  position: fixed;
+  bottom: 5px;
+  right: 5px;
+}

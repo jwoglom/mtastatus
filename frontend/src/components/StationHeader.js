@@ -8,8 +8,8 @@ export default class StationHeader extends React.Component {
     async componentDidMount() {
     }
 
-    dashToNewline(text) {
-        if (text.indexOf('-') === -1) {
+    dashToNewline(text, fullWidth) {
+        if (!text || text.indexOf('-') === -1) {
             return text;
         }
         let parts = text.split('-');
@@ -27,17 +27,21 @@ export default class StationHeader extends React.Component {
                     updated.push(curPart);
                     curPart = parts[i];
                 }
-                console.log(newPart, curPart);
+                console.debug(newPart, '|', curPart);
             }
             if (curPart.length > 0) {
                 updated.push(curPart);
             }
+            console.debug('updated', updated);
             return updated;
         }
 
         let updated = buildUpdated(parts, 18);
         if (updated.length > 2) {
             updated = buildUpdated(parts, 21);
+        }
+        if (fullWidth) {
+            updated = buildUpdated(parts, 99);
         }
 
         return updated.map((t, i) => <React.Fragment key={t}>
@@ -90,10 +94,10 @@ export default class StationHeader extends React.Component {
                             </div>
                         </>}
                         <div className={"header-dest "+direction} title={destination[0]}>
-                            {this.dashToNewline(destination[0])}
+                            {this.dashToNewline(destination[0], false)}
                         </div>
                         <div className={"header-dest "+direction} title={destination[1]}>
-                            {this.dashToNewline(destination[1])}
+                            {this.dashToNewline(destination[1], false)}
                         </div>
 
                         <div>
@@ -111,7 +115,7 @@ export default class StationHeader extends React.Component {
                     </div>
                     {this.renderRoutes(routes, displayedRoutes)}
                     <span className={"header-dest "+direction} title={destination}>
-                        {destination}
+                        {this.dashToNewline(destination, true)}
                     </span>
                 </>}
             </h1>

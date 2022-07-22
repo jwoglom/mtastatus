@@ -16,7 +16,7 @@ export default class StationInfo extends React.Component {
             this.loadData();
             this.timer = setInterval(this.loadData.bind(this), 20000);
         } else if (this.props.stationData) {
-            this.setState(this.props.stationData);
+            this.setState({...this.state, ...this.props.stationData});
         }
     }
 

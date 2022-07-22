@@ -36,10 +36,14 @@ export default class StationsGroup extends React.Component {
             let [nb, sb] = s.split('|');
 
             return (
-                <DualStationInfo stationData={{
-                    nb: this.state.stationData[nb] ? this.state.stationData[nb] : mergeStationInfo(nb, this.state.stationData),
-                    sb: this.state.stationData[sb] ? this.state.stationData[sb] : mergeStationInfo(sb, this.state.stationData)
-                }} key={s} {...this.props.stationInfoProps} />
+                <DualStationInfo
+                    stationData={{
+                        nb: this.state.stationData[nb] ? this.state.stationData[nb] : mergeStationInfo(nb, this.state.stationData),
+                        sb: this.state.stationData[sb] ? this.state.stationData[sb] : mergeStationInfo(sb, this.state.stationData)
+                    }}
+                    key={s}
+                    showLastUpdated={false}
+                    {...this.props.stationInfoProps} />
             );
         }
         return (
@@ -47,20 +51,44 @@ export default class StationsGroup extends React.Component {
                 stationData={this.state.stationData[s] ? 
                     this.state.stationData[s] : 
                     mergeStationInfo(s, this.state.stationData)} 
-                key={s} {...this.props.stationInfoProps} />
+                key={s} 
+                showLastUpdated={false}
+                {...this.props.stationInfoProps} />
         )
+    }
+
+    lastUpdated() {
+        let date = '';
+        if (!this.state.stationData) {
+            return date;
+        }
+        // eslint-disable-next-line
+        Object.entries(this.state.stationData).map((entry) => {
+            let data = entry[1];
+            if (date === '' || data.updateTime < date) {
+                date = data.updateTime;
+            }
+        });
+        return date;
     }
 
     render() {
         let stationGroups = this.props.stations.split(";");
+        let lastUpdated = this.lastUpdated();
         return (
-            <div className="groups-container" onClick={this.loadData.bind(this)}>
-                {stationGroups.map(group =>
-                    <div className="stations-group" key={group}>
-                        {group.split(",").map(s => this.renderItemInGroup(s))}
-                    </div>
-                )}
+            <>
+                <div className="groups-container" onClick={this.loadData.bind(this)}>
+                    {stationGroups.map(group =>
+                        <div className="stations-group" key={group}>
+                            {group.split(",").map(s => this.renderItemInGroup(s))}
+                        </div>
+                    )}
                 </div>
+
+                {lastUpdated && <div className="bottom-lastupdated">
+                    Last updated: {lastUpdated}
+                </div>}
+            </>
         )
     }
 }

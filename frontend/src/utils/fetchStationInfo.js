@@ -6,6 +6,9 @@ export async function fetchStationInfo(stations) {
 
     let ret = {};
     Object.keys(data).forEach((station, i) => {
+        if (typeof data[station] === 'undefined') {
+            throw new Error('Station '+station+' not found in data: ' + Object.keys(data))
+        }
         const stops = data[station]["stops"];
         const date = (""+new Date()).split(" ")[4];
         ret[station] = {

@@ -1,13 +1,21 @@
 import React from "react";
 import {withRouter} from "react-router-dom";
+import buildSearchParamsProps from "../utils/searchParamsProps";
 import StationInfo from "./StationInfo";
 
 class MtaStatusStation extends React.Component {
+    buildProps() {
+        const station = this.props.match.params.station;
+        let q = new URLSearchParams(this.props.location.search);
+
+        return {
+            station: station,
+            ...buildSearchParamsProps(q)['stationInfoProps']
+        }
+    }
     render() {
-        let station = this.props.match.params.station;
-        console.log("station: "+station);
         return (
-            <StationInfo station={station}></StationInfo>
+            <StationInfo {...this.buildProps()} />
         )
     }
 }

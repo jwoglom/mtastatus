@@ -8,7 +8,8 @@ import StationStop from "./StationStop";
 
 export default class StationInfo extends React.Component {
     state = {
-        stops: []
+        stops: [],
+        showAll: false
     }
 
     async componentDidMount() {
@@ -45,12 +46,17 @@ export default class StationInfo extends React.Component {
         }
     }
 
+    onClick() {
+        this.setState({...this.state, showAll: !this.state.showAll})
+        console.log('showAll', this.state.showAll);
+    }
+
     render() {
         if (!this.state.name) {
             return (<div>Loading...</div>);
         }
         return (
-            <div className="station-info" data-props={JSON.stringify(this.props)}>
+            <div className="station-info" className={"station-info " + (this.state.showAll ? "showAll" : "notShowAll")} onClick={this.onClick.bind(this)}>
                 
                 <StationHeader
                     name={this.state.name}
@@ -61,8 +67,12 @@ export default class StationInfo extends React.Component {
                 ></StationHeader>
                 
                 <div className="station-stops">
-                    {filterToShownStops(this.props, this.state.stops).map((stop, i) => 
-                        <StationStop stop={stop} key={i}></StationStop>
+                    {filterToShownStops(this.props, this.state.stops, this.state.showAll).map((stop, i) => 
+                        <StationStop 
+                            key={i} 
+                            stop={stop} 
+                            shortUnits={this.props.shortUnits} 
+                            showTime={this.props.showTime} />
                     )}
                 </div>
                 
@@ -78,8 +88,10 @@ export default class StationInfo extends React.Component {
 };
 
 StationInfo.defaultProps = {
-    showLastUpdated: true,
     minTimeMinutes: 1,
     maxTimeMinutes: 60,
     maxCount: 10,
+    showLastUpdated: true,
+    shortUnits: false,
+    showTime: false
 }

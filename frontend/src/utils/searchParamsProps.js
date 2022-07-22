@@ -10,20 +10,32 @@ export default function buildSearchParamsProps(q) {
         stationInfoProps['showLastUpdated'] = q.get('showLastUpdated') !== 'false';
     }
 
-    let p;
-    for (let i in p=['minTimeMinutes', 'maxTimeMinutes', 'maxCount']) {
-        if (q.get(p[i])) {
-            stationInfoProps[p[i]] = parseInt(q.get(p[i]));
+    function process(q, p, type) {
+        if (q.get(p)) {
+            if (type == 'int') {
+                stationInfoProps[p] = parseInt(q.get(p));
+            } else if (type == 'bool') {
+                stationInfoProps[p] = q.get(p) !== 'false';
+            } else {
+                stationInfoProps[p] = q.get(p);
+            }
         }
         q.forEach((val, key) => {
-            if (key.startsWith(p[i]+'[')) {
+            if (key.startsWith(p+'[')) {
                 let forCode = key.split('[')[1].split(']')[0];
                 ret['stationInfoPropsPerStation'] = ret['stationInfoPropsPerStation'] || {};
                 ret['stationInfoPropsPerStation'][forCode] = ret['stationInfoPropsPerStation'][forCode] || {};
-                ret['stationInfoPropsPerStation'][forCode][p[i]] = parseInt(q.get(key));
+                ret['stationInfoPropsPerStation'][forCode][p] = parseInt(q.get(key));
             }
         })
     }
+
+    process(q, 'minTimeMinutes', 'int');
+    process(q, 'maxTimeMinutes', 'int');
+    process(q, 'maxCount', 'int');
+    process(q, 'showLastUpdated', 'bool');
+    process(q, 'shortUnits', 'bool');
+    process(q, 'showTime', 'bool');
 
     if (Object.keys(stationInfoProps).length > 0) {
         ret['stationInfoProps'] = stationInfoProps;

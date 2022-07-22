@@ -42,6 +42,11 @@ def build_stations_map():
                 label = dest["South_Direction_Label"]
             
             routes = dest["Daytime_Routes_Array"]
+        
+        if label == "N":
+            label = "Northbound"
+        elif label == "S":
+            label = "Southbound"
 
         stations[stop["stop_id"]] = {
             "name": stop["stop_name"],

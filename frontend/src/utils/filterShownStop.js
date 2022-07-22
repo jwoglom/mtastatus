@@ -26,10 +26,10 @@ export function showStop(props, stop, i) {
     return true;
 }
 
-export function filterToShownStops(props, stops) {
+export function filterToShownStops(props, stops, showAll) {
     let count = 0;
     return stops.filter((stop) => {
-        let ok = showStop.apply(this, [props, stop, count]);
+        let ok = showAll || showStop.apply(this, [props, stop, count]);
         if (ok) {
             count++;
         }

@@ -2,7 +2,7 @@ export async function fetchStationInfo(stations) {
     const endpoint = process.env.REACT_APP_MTASTATUS_ENDPOINT;
     const req = await fetch(endpoint+'/api/stations/'+stations.join(','));
     const data = await req.json();
-    console.log(data);
+    console.log("fetchStationInfo:", stations, data);
 
     let ret = {};
     Object.keys(data).forEach((station, i) => {

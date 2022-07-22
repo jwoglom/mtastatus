@@ -15,7 +15,8 @@ export default class DualStationInfo extends React.Component {
         sb: {
             name: null,
             stops: []
-        }
+        },
+        showAll: false
     }
 
     async componentDidMount() {
@@ -93,8 +94,8 @@ export default class DualStationInfo extends React.Component {
 
     mergedStops() {
         let stops = [];
-        let nbStops = filterToShownStops(this.props, this.state.nb.stops || []);
-        let sbStops = filterToShownStops(this.props, this.state.sb.stops || []);
+        let nbStops = filterToShownStops(this.props, this.state.nb.stops || [], this.state.showAll);
+        let sbStops = filterToShownStops(this.props, this.state.sb.stops || [], this.state.showAll);
 
         let min = Math.min(nbStops.length, sbStops.length);
         for (let i=0; i<min; i++) {
@@ -126,8 +127,11 @@ export default class DualStationInfo extends React.Component {
         return this.state.sb.updateTime;
     }
 
+    onClick() {
+        this.setState({...this.state, showAll: !this.state.showAll})
+    }
+
     render() {
-        console.log("state", this.state);
         if (this.state.error) {
             return (<div>Error: {this.state.error}</div>)
         }
@@ -137,7 +141,7 @@ export default class DualStationInfo extends React.Component {
 
         const stops = this.mergedStops();
         return (
-            <div className="station-info">
+            <div className={"station-info " + (this.state.showAll ? "showAll" : "notShowAll")} onClick={this.onClick.bind(this)}>
                 <StationHeader
                     name={this.stationName()}
                     dualDirection={true}
@@ -150,7 +154,11 @@ export default class DualStationInfo extends React.Component {
                 <div className="station-stops dual-station-stops">
                     {stops.map((obj, i) => <React.Fragment key={i}>
                         {obj.padding && <StationStop hidden={true} />}
-                        {obj.stop && <StationStop stop={obj.stop} direction={obj.direction} />}
+                        {obj.stop && <StationStop 
+                            stop={obj.stop} 
+                            direction={obj.direction}
+                            shortUnits={this.props.shortUnits} 
+                            showTime={this.props.showTime} />}
                     </React.Fragment>)}
                 </div>
                 
@@ -166,8 +174,10 @@ export default class DualStationInfo extends React.Component {
 };
 
 DualStationInfo.defaultProps = {
-    showLastUpdated: true,
     minTimeMinutes: 1,
     maxTimeMinutes: 60,
     maxCount: 10,
+    showLastUpdated: true,
+    shortUnits: false,
+    showTime: false
 }

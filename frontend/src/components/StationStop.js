@@ -8,8 +8,12 @@ export default class StationStop extends React.Component {
     }
 
     formatter(value, unit, suffix, epochMilliseconds) {
-        function inner() {
+        function inner(props) {
             if (unit === 'second') {
+                if (props.shortUnits) {
+                    return '<1 min';
+                }
+
                 return '<1 minute';
             }
 
@@ -30,6 +34,10 @@ export default class StationStop extends React.Component {
                 return ret;
             }
 
+            if (unit === 'minute' && props.shortUnits) {
+                unit = 'min';
+            }
+
             if (value === 1) {
                 return value+' '+unit+suffix;
             }
@@ -38,7 +46,7 @@ export default class StationStop extends React.Component {
 
         return (
             <span title={""+new Date(epochMilliseconds)}>
-                {inner()}
+                {inner(this.props)}
             </span>
         );
 
@@ -51,6 +59,15 @@ export default class StationStop extends React.Component {
             return '↓';
         }
         return '';
+    }
+
+    hrMin(time) {
+        const t = new Date(time);
+        let h = t.getHours();
+        if (h > 12) h-=12;
+        let m = t.getMinutes();
+        if (m < 10) m="0"+m;
+        return h+":"+m;
     }
 
     render() {
@@ -66,16 +83,21 @@ export default class StationStop extends React.Component {
             <div className="station-stop">
                 <RouteIcon route_id={stop["trip"]["route_id"]} />
                 <span className="time">
-                    <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>
+                    <TimeAgo date={stop["time"]} formatter={this.formatter.bind(this)}></TimeAgo>
+                    {this.props.showTime && <span className="time-hrmin">
+                        {this.hrMin(stop["time"])}
+                    </span>}
                 </span>
-                {stop["title"] && <span className="title">
-                    {stop["title"]}
-                </span>}
-
-                {direction && <span className="title">
-                    {this.directionLabel(direction)}
-                </span>}
+                <span className="title">
+                    {!direction && stop["title"] && stop["title"]}
+                    {direction && this.directionLabel(direction)}
+                </span>
             </div>
         )
     }
 }
+
+StationStop.defaultProps = {
+    shortUnits: false,
+    showTime: false
+};

@@ -68,5 +68,5 @@ def build_destinations_map():
 if __name__ == '__main__':
     import pprint
     pprint.pprint(build_destinations_map())
-    # import json
-    # open("data/destinations.json", "w").write(json.dumps(build_destinations_map()))
+    import json
+    open("data/destinations.json", "w").write(json.dumps(build_destinations_map()))

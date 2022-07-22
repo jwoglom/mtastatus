@@ -91,8 +91,17 @@
   width: 140px;
 }
 
+.station-stop .time-hrmin {
+  text-align: right;
+  float: right;
+  opacity: 0.6;
+  letter-spacing: -1px;
+}
+
 .station-stop .title {
   white-space: nowrap;
+  float: right;
+  padding-right: 10px;
 }
 
 .bottom-lastupdated {

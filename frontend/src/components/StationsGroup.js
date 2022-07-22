@@ -21,7 +21,7 @@ export default class StationsGroup extends React.Component {
     }
 
     async loadData() {
-        let individualStations = this.props.stations.split(/;|,|\|/);
+        let individualStations = this.props.stations.replace(/ /g,'+').split(/;|,|\+|\|/);
         let info = await fetchStationInfo(individualStations);
         console.debug("setting sessionData:", info);
         this.setState({stationData: info});
@@ -29,8 +29,43 @@ export default class StationsGroup extends React.Component {
 
     renderItemInGroup(s) {
         let parsedS = s;
-        if (!(s in this.state.stationData) && !s.endsWith('N') && !s.endsWith('S') && !this.props.showMergedStationView) {
+
+        // `235` becomes `235N|235S`
+        if (!(s in this.state.stationData) && 
+            !s.endsWith('N') && 
+            !s.endsWith('S') && 
+            s.indexOf('|') === -1 && 
+            s.indexOf('+') === -1 && 
+            !this.props.showMergedStationView)
+        {
             parsedS = s+'N|'+s+'S';
+        }
+
+        // `235+D24` becomes `235N+D24N|235S+D24S`
+        if (!(s in this.state.stationData) &&
+            s.indexOf('+') !== -1 &&
+            s.indexOf('|') === -1)
+        {
+            let left = [];
+            let right = [];
+            let fix = false;
+            s.split('+').forEach(p => {
+                if (!p.endsWith('N') || !p.endsWith('S')) {
+                    fix = true;
+                    left.push(p+'N');
+                    right.push(p+'S')
+                } else {
+                    left.push(p);
+                    right.push(p);
+                }
+            });
+            if (fix) {
+                parsedS = left.join('+')+'|'+right.join('+');
+            }
+        }
+
+        function processStationString(singleOrPlus) {
+            return this.state.stationData[singleOrPlus] ? this.state.stationData[singleOrPlus] : mergeStationInfo(singleOrPlus, this.state.stationData)
         }
 
         if (parsedS.indexOf('|') > -1) {
@@ -39,8 +74,8 @@ export default class StationsGroup extends React.Component {
             return (
                 <DualStationInfo
                     stationData={{
-                        nb: this.state.stationData[nb] ? this.state.stationData[nb] : mergeStationInfo(nb, this.state.stationData),
-                        sb: this.state.stationData[sb] ? this.state.stationData[sb] : mergeStationInfo(sb, this.state.stationData)
+                        nb: processStationString.apply(this, [nb]),
+                        sb: processStationString.apply(this, [sb])
                     }}
                     key={parsedS}
                     showLastUpdated={false}
@@ -50,9 +85,7 @@ export default class StationsGroup extends React.Component {
         }
         return (
             <StationInfo 
-                stationData={this.state.stationData[s] ? 
-                    this.state.stationData[s] : 
-                    mergeStationInfo(s, this.state.stationData)} 
+                stationData={processStationString.apply(this, [s])} 
                 key={s} 
                 showLastUpdated={false}
                 {...this.props.stationInfoProps}
@@ -76,7 +109,7 @@ export default class StationsGroup extends React.Component {
     }
 
     render() {
-        let stationGroups = this.props.stations.split(";");
+        let stationGroups = this.props.stations.replace(/ /g, '+').split(";");
         let lastUpdated = this.lastUpdated();
         return (
             <>

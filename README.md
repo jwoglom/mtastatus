@@ -57,18 +57,23 @@ MTAStatus supports providing either the overarching station code or the specific
 If the former is displayed, information across both platforms will be condensed into one panel.
 
 ### Station Groupings
-Station IDs can be delimited with commas (`,`), semicolons (`;`), and pipes (`|`) to create a station grouping.
+Station IDs can be delimited with commas (`,`), semicolons (`;`), pipes (`|`), and pluses (`+`) to create a station grouping.
 
-* A **comma** (`,`) creates a new pane to the right of the previous one.
+They are processed in this order:
+
 * A **semicolon** (`;`) creates a new row of panes.
+* A **comma** (`,`) creates a new pane to the right of the previous one.
 * A **pipe** (`|`) allows you to provide two different station IDs to be displayed within the same pane.
   This is done by default when you provide an overarching station code in order to display both the northbound and southbound platforms.
+* A **plus** (`+`) allows two stations with different IDs to be merged together and treated like a single ID.
+  This can be used to merge together IDs of combined stations.
 
 For example:
 
 * To show **Jay St-Metrotech** (`A41`) next to **High St** (`A40`), you can use grouping `A41,A40`.
 * To add the northbound platform of **Hoyt-Schermerhorn Sts** (`A42N`) to the row below, you can use grouping `A41,A40;A42N`
 * To show the northbound platform of **Smith-9th Sts** (`F22N`) within the same pane as the northbound platform of **Jay St-Metrotech** (`A41N`), you can use grouping `F22N|A41N`
+* To show the A/C/E platforms at **W 4 St** (`A32`) combined with the B/D/F/M platforms (`D20`), you can use grouping `A32+D20`
 
 ## URL Endpoints
 You can provide these station IDs in a few different ways:

@@ -41,6 +41,9 @@
         s.innerHTML = params.get('customCss');
         document.body.appendChild(s);
       }
+      if (params.get('condensed')) {
+        document.body.classList.add('condensed');
+      }
     </script>
   </body>
 </html>

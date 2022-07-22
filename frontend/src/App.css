@@ -100,3 +100,24 @@
   bottom: 5px;
   right: 5px;
 }
+
+body.condensed {
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+body.condensed .header-dest {
+  max-height: 24px;
+  line-height: 24px;
+  overflow: hidden;
+  align-self: auto;
+}
+
+body.condensed h1 {
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+body.condensed ::-webkit-scrollbar {
+  width: 0!important;
+}

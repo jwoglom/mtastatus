@@ -127,10 +127,6 @@ body.condensed h1 {
   margin-bottom: 8px;
 }
 
-body.condensed ::-webkit-scrollbar {
-  width: 0!important;
-}
-
 .stations-list {
   display: flex;
   flex-wrap: wrap;

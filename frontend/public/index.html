@@ -43,6 +43,9 @@
       }
       if (params.get('condensed')) {
         document.body.classList.add('condensed');
+        var s = document.createElement('style');
+        s.innerHTML = '::-webkit-scrollbar{width: 0!important;}';
+        document.body.appendChild(s);
       }
     </script>
   </body>

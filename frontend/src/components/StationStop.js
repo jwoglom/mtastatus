@@ -19,6 +19,9 @@ export default class StationStop extends React.Component {
 
             suffix = '';
             if (unit === 'hour') {
+                if (props.shortUnits) {
+                    unit = 'hr';
+                }
                 let totalMins = parseInt((epochMilliseconds - +new Date())/60000);
                 let hrs = parseInt(totalMins / 60);
                 let addlMins = totalMins - hrs*60;

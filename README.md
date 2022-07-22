@@ -56,23 +56,48 @@ Station IDs can be delimited with commas (`,`), semicolons (`;`), and pipes (`|`
 * A **pipe** (`|`) allows you to provide two different station IDs to be displayed within the same pane.
   This is done by default when you provide an overarching station code in order to display both the northbound and southbound platforms.
 
+For example:
+
+* To show **Jay St-Metrotech** (`A41`) next to **High St** (`A40`), you can use grouping `A41,A40`.
+* To add the northbound platform of **Hoyt-Schermerhorn Sts** (`A42N`) to the row below, you can use grouping `A41,A40;A42N`
+* To show the northbound platform of **Smith-9th Sts** (`F22N`) within the same pane as the northbound platform of **Jay St-Metrotech** (`A41N`), you can use grouping `F22N|A41N`
+
 ## URL Endpoints
 You can provide these station IDs in a few different ways:
 
 ### Default home screen
 Run the React app with the `REACT_APP_MTASTATUS_HOME_STATIONS` environment variable set to a station grouping to control what appears by default on the index page.
 
+### Station-specific Link
+Link to `/station/<station>` with a specific station ID to view details for just that station.
+This can be easily iframe'd as the station contents takes up the entire page.
+
+http://localhost:3000/station/A41N
+
+<img width="400" alt="image" src="https://user-images.githubusercontent.com/192620/180370523-10c62b93-00d6-4b96-8b68-fbc997a6de07.png">
+
+Note that if a non-`N`/`S` station code is provided (e.g. `A41` versus `A41S`), it will merge trains across both destinations for that station into one list. (If you want to see them separately, use `/dualstation/<code>N/<code>S` or `/stations/<code>`)
+
+http://localhost:3000/station/A41
+
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/192620/180370487-e0600b5a-fe00-4f70-8d57-40b3be5380ab.png">
+
+### Dual-station link
+To merge two `N`/`S` platform codes into one panel, use `/dualstation/F22N/A41N`.
+This is equivalent to a station grouping URL of `/stations/F22N|A41N`, just without any flexbox margins/centering.
+
+http://localhost:3000/dualstation/F22N/A41N
+
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/192620/180371516-a0b82394-540a-4de3-bdb3-b66b6e3c8bce.png">
+
+
 ### Station Grouping Link
 Link to `/stations/<grouping>` to specify a custom station grouping.
 
-### Station-specific Link
-Link to `/station/<station>` with a specific station ID to view details for just that station.
+http://localhost:3000/stations/A41,A40S%7CA41N,A40;A41N,A41S,A40N,A40S
 
-Note that if a non-`N`/`S` station code is provided (e.g. `634`), it will merge trains across destinations for that station into one list.
+<img width="600" alt="image" src="https://user-images.githubusercontent.com/192620/180370849-57b93a49-cabc-4869-abef-3c4f0ec4527b.png">
 
-### Dual-station link
-To instead see the northbound and southbound trains separated, use `/dualstation/634N/634S`.
-A station grouping URL of `/stations/634` will display the same content.
 
 ## Custom Parameters
 You can specify via GET arguments:

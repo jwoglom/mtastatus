@@ -27,12 +27,10 @@ export default class StationHeader extends React.Component {
                     updated.push(curPart);
                     curPart = parts[i];
                 }
-                console.debug(newPart, '|', curPart);
             }
             if (curPart.length > 0) {
                 updated.push(curPart);
             }
-            console.debug('updated', updated);
             return updated;
         }
 

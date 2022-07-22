@@ -50,7 +50,7 @@ export default class StationInfo extends React.Component {
             return (<div>Loading...</div>);
         }
         return (
-            <div className="station-info">
+            <div className="station-info" data-props={JSON.stringify(this.props)}>
                 
                 <StationHeader
                     name={this.state.name}

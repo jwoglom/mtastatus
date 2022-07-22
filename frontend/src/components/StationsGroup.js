@@ -28,12 +28,13 @@ export default class StationsGroup extends React.Component {
     }
 
     renderItemInGroup(s) {
+        let parsedS = s;
         if (!(s in this.state.stationData) && !s.endsWith('N') && !s.endsWith('S') && !this.props.showMergedStationView) {
-            s = s+'N|'+s+'S';
+            parsedS = s+'N|'+s+'S';
         }
 
-        if (s.indexOf('|') > -1) {
-            let [nb, sb] = s.split('|');
+        if (parsedS.indexOf('|') > -1) {
+            let [nb, sb] = parsedS.split('|');
 
             return (
                 <DualStationInfo
@@ -41,9 +42,10 @@ export default class StationsGroup extends React.Component {
                         nb: this.state.stationData[nb] ? this.state.stationData[nb] : mergeStationInfo(nb, this.state.stationData),
                         sb: this.state.stationData[sb] ? this.state.stationData[sb] : mergeStationInfo(sb, this.state.stationData)
                     }}
-                    key={s}
+                    key={parsedS}
                     showLastUpdated={false}
-                    {...this.props.stationInfoProps} />
+                    {...this.props.stationInfoProps}
+                    {...this.props.stationInfoPropsPerStation[s] ? this.props.stationInfoPropsPerStation[s] : {}} />
             );
         }
         return (
@@ -53,7 +55,8 @@ export default class StationsGroup extends React.Component {
                     mergeStationInfo(s, this.state.stationData)} 
                 key={s} 
                 showLastUpdated={false}
-                {...this.props.stationInfoProps} />
+                {...this.props.stationInfoProps}
+                {...this.props.stationInfoPropsPerStation[s] ? this.props.stationInfoPropsPerStation[s] : {}} />
         )
     }
 
@@ -95,5 +98,6 @@ export default class StationsGroup extends React.Component {
 
 StationsGroup.defaultProps = {
     showMergedStationView: false,
-    stationInfoProps: {}
+    stationInfoProps: {},
+    stationInfoPropsPerStation: {}
 }

@@ -136,7 +136,6 @@ export default class DualStationInfo extends React.Component {
         }
 
         const stops = this.mergedStops();
-        console.debug("mergedStops", stops);
         return (
             <div className="station-info">
                 <StationHeader

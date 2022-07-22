@@ -130,3 +130,25 @@ body.condensed h1 {
 body.condensed ::-webkit-scrollbar {
   width: 0!important;
 }
+
+.stations-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  cursor: pointer;
+}
+
+.stations-list .station {
+  display: flex;
+  margin: 5px 10px;
+  width: 100%;
+  flex-wrap: wrap;
+  vertical-align: middle;
+}
+
+.stations-list .station > a {
+  color: black;
+  text-decoration: none;
+  line-height: 20px;
+  padding-left: 5px;
+}

@@ -44,7 +44,7 @@ REACT_APP_MTASTATUS_ENDPOINT=http://localhost:8400 npm start
 ## Terminology
 
 ### Station Codes
-Station Stop IDs can be determined by looking for a station name in `data/stops.txt`.
+Station Stop IDs can be determined by looking for a station name in `data/stops.txt`, or by viewing the `/stations` endpoint on the React app.
 Station codes which end with a `N` or `S` refer to the northbound or southbound platform for the overall station.
 
 For example, **23 St** on the 4/5/6 trains has base station code `634`. `634N` refers to the northbound and `634S` the southbound platform.

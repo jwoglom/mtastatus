@@ -12,9 +12,9 @@ export default function buildSearchParamsProps(q) {
 
     function process(q, p, type) {
         if (q.get(p)) {
-            if (type == 'int') {
+            if (type === 'int') {
                 stationInfoProps[p] = parseInt(q.get(p));
-            } else if (type == 'bool') {
+            } else if (type === 'bool') {
                 stationInfoProps[p] = q.get(p) !== 'false';
             } else {
                 stationInfoProps[p] = q.get(p);

@@ -191,6 +191,10 @@ def api_stations_route(stations):
     inferred_lines = get_inferred_lines(sts)
     return jsonify(get_stations(inferred_lines, sts))
 
+@app.route('/api/stations_list')
+def api_stations_list_route():
+    return jsonify(stations)
+
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def serve(path):

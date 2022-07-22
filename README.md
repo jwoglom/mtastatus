@@ -1,8 +1,16 @@
 # mtastatus
 
 Dashboard which displays MTA New York City Subway train arrival times for a provided set of stations.
+Built to be extremely customizable, and perfect for a wall-mounted display.
+
+<img width="900" alt="Screenshot" src="https://user-images.githubusercontent.com/192620/180371882-b853ab36-4671-421a-822a-9736078d52b8.png">
+
 
 ## Setup
+
+The app consists of a Python backend API implemented in Flask and a frontend UI implemented in React.
+
+Setup instructions:
 
 * [Obtain a MTA API key](https://new.mta.info/developers)
 * Clone repo:

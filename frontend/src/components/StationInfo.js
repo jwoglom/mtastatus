@@ -1,6 +1,7 @@
 import React from "react";
 
 import {fetchStationInfo} from "../utils/fetchStationInfo";
+import { filterToShownStops } from "../utils/filterShownStop";
 import mergeStationInfo from "../utils/mergeStationInfo";
 import StationHeader from "./StationHeader";
 import StationStop from "./StationStop";
@@ -44,29 +45,6 @@ export default class StationInfo extends React.Component {
         }
     }
 
-    showStop(stop, i) {
-        let time = new Date(stop["time"]);
-        let minDiff = (time - new Date()) / 60000;
-
-        if (!this.props.maxTimeMinutes) {
-            return true;
-        }
-
-        if (minDiff > this.props.maxTimeMinutes) {
-            return false;
-        }
-
-        if (!this.props.maxCount) {
-            return true;
-        }
-
-        if (i > this.props.maxCount) {
-            return false;
-        }
-
-        return true;
-    }
-
     render() {
         if (!this.state.name) {
             return (<div>Loading...</div>);
@@ -83,9 +61,8 @@ export default class StationInfo extends React.Component {
                 ></StationHeader>
                 
                 <div className="station-stops">
-                    {this.state.stops.map((stop, i) => this.showStop.apply(this, [stop, i]) ?
+                    {filterToShownStops(this.props, this.state.stops).map((stop, i) => 
                         <StationStop stop={stop} key={i}></StationStop>
-                        : <div key={i}></div>
                     )}
                 </div>
                 
@@ -102,6 +79,7 @@ export default class StationInfo extends React.Component {
 
 StationInfo.defaultProps = {
     showLastUpdated: true,
+    minTimeMinutes: 1,
     maxTimeMinutes: 60,
     maxCount: 10,
 }

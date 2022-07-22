@@ -39,7 +39,7 @@ export default class StationsGroup extends React.Component {
                 <DualStationInfo stationData={{
                     nb: this.state.stationData[nb] ? this.state.stationData[nb] : mergeStationInfo(nb, this.state.stationData),
                     sb: this.state.stationData[sb] ? this.state.stationData[sb] : mergeStationInfo(sb, this.state.stationData)
-                }} key={s} />
+                }} key={s} {...this.props.stationInfoProps} />
             );
         }
         return (
@@ -47,7 +47,7 @@ export default class StationsGroup extends React.Component {
                 stationData={this.state.stationData[s] ? 
                     this.state.stationData[s] : 
                     mergeStationInfo(s, this.state.stationData)} 
-                key={s} />
+                key={s} {...this.props.stationInfoProps} />
         )
     }
 
@@ -67,4 +67,5 @@ export default class StationsGroup extends React.Component {
 
 StationsGroup.defaultProps = {
     showMergedStationView: false,
+    stationInfoProps: {}
 }

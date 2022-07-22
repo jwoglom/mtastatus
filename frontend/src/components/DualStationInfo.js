@@ -1,6 +1,7 @@
 import React from "react";
 
 import {fetchStationInfo} from "../utils/fetchStationInfo";
+import { filterToShownStops } from "../utils/filterShownStop";
 import mergeStationInfo from "../utils/mergeStationInfo";
 import StationHeader from "./StationHeader";
 import StationStop from "./StationStop";
@@ -72,29 +73,6 @@ export default class DualStationInfo extends React.Component {
         }
     }
 
-    showStop(stop, i) {
-        let time = new Date(stop["time"]);
-        let minDiff = (time - new Date()) / 60000;
-
-        if (!this.props.maxTimeMinutes) {
-            return true;
-        }
-
-        if (minDiff > this.props.maxTimeMinutes) {
-            return false;
-        }
-
-        if (!this.props.maxCount) {
-            return true;
-        }
-
-        if (i > this.props.maxCount) {
-            return false;
-        }
-
-        return true;
-    }
-
     stationName() {
         if (!this.state.nb || !this.state.sb) {
             return null;
@@ -106,14 +84,10 @@ export default class DualStationInfo extends React.Component {
         return [this.state.nb.name, this.state.sb.name];
     }
 
-    filterToShownStops(stops) {
-        return stops.filter((stop, i) => this.showStop.apply(this, [stop, i]));
-    }
-
     mergedStops() {
         let stops = [];
-        let nbStops = this.filterToShownStops(this.state.nb.stops || []);
-        let sbStops = this.filterToShownStops(this.state.sb.stops || []);
+        let nbStops = filterToShownStops(this.props, this.state.nb.stops || []);
+        let sbStops = filterToShownStops(this.props, this.state.sb.stops || []);
 
         let min = Math.min(nbStops.length, sbStops.length);
         for (let i=0; i<min; i++) {
@@ -184,6 +158,7 @@ export default class DualStationInfo extends React.Component {
 
 DualStationInfo.defaultProps = {
     showLastUpdated: true,
+    minTimeMinutes: 1,
     maxTimeMinutes: 60,
     maxCount: 10,
 }

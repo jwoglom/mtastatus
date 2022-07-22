@@ -64,13 +64,16 @@ export default class StationStop extends React.Component {
 
         return (
             <div className="station-stop">
-                {direction && this.directionLabel(direction)}
                 <RouteIcon route_id={stop["trip"]["route_id"]} />
                 <span className="time">
                     <TimeAgo date={stop["time"]} formatter={this.formatter}></TimeAgo>
                 </span>
                 {stop["title"] && <span className="title">
                     {stop["title"]}
+                </span>}
+
+                {direction && <span className="title">
+                    {this.directionLabel(direction)}
                 </span>}
             </div>
         )

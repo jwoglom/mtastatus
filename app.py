@@ -3,10 +3,12 @@
 from flask import Flask, Response, request, abort, render_template, jsonify, send_from_directory
 from flask_cors import CORS
 from underground import SubwayFeed, metadata
+from zoneinfo import ZoneInfo
 
 import csv
 import json
 import os
+import datetime
 
 app = Flask(__name__, static_folder='frontend/build')
 CORS(app)
@@ -174,6 +176,95 @@ def sort_stops(stops):
 def api_line_stations_route(lines, stations):
     sts = process_stations(stations.split(','))
     return jsonify(get_stations(lines.split(','), sts))
+
+@app.route('/api/lines/<path:lines>/stations/<path:stations>/tts')
+def api_line_stations_tts_route(lines, stations):
+    def get_station_param(name, st, default='0'):
+        for_st = request.args.get('%s[%s]' % (name, st), default)
+        if for_st != default:
+            return for_st
+
+        st_base = st
+        if st_base.endswith('N') or st_base.endswith('S'):
+            st_base = st[:-1]
+
+        for_st_base = request.args.get('%s[%s]' % (name, st_base), default)
+        if for_st_base != default:
+            return for_st_base
+
+        return request.args.get(name, default)
+
+    sts = process_stations(stations.split(','))
+    stations = get_stations(lines.split(','), sts)
+    stations_ordered = []
+    for st in sts:
+        if stations[st]:
+            stations_ordered.append([st, stations[st]])
+
+    statements = []
+    for code, st in stations_ordered:
+        station = st['station']['name']
+        direction = st['station']['direction']
+        dest = st['station']['destination']
+        if '-' in dest:
+            if direction == 'N':
+                dest = get_station_param('northLabel', code, default='North')
+            elif direction == 'S':
+                dest = get_station_param('southLabel', code, default='South')
+
+        count = int(get_station_param('count', code, default='0'))
+        min_time_mins = int(get_station_param('minTimeMinutes', code, default='0'))
+        merge_lines = get_station_param('mergeLines', code, default='true') == 'true'
+
+        stops = st['stops']
+        stops.sort(key=lambda x: datetime.datetime.fromisoformat(x['time']))
+        times = []
+        i = 0
+        for stop in stops:
+            route = stop['trip']['route_id']
+            time = datetime.datetime.fromisoformat(stop['time'])
+            diff = round((time - datetime.datetime.now(ZoneInfo('America/New_York'))).seconds/60)
+            if diff < min_time_mins:
+                continue
+
+            i += 1
+            if count == 1:
+                statements.append('The next %s-bound %s train at %s is %s minutes away.' % (dest, route, station, diff))
+                break
+            elif count >= i:
+                times.append([route, diff])
+
+        if times and merge_lines:
+            routes = [i[0] for i in times]
+            statement = 'The next %s-bound %s trains at %s are ' % (dest, ' and '.join(list(set(routes))), station)
+            statement += ''.join(['%s, ' % diff[1] for diff in times[:-1]])[:-2]
+            statement += ' and %s minutes away.' % times[-1][1]
+            statements.append(statement)
+        elif times:
+            times_per = {}
+            for t in times:
+                if t[0] not in times_per:
+                    times_per[t[0]] = []
+                times_per[t[0]].append(t)
+
+            for route, times in times_per.items():
+                if direction == 'N':
+                    dest = get_station_param('northLabel', '%s-%s' % (route, code), default=dest)
+                elif direction == 'S':
+                    dest = get_station_param('southLabel', '%s-%s' % (route, code), default=dest)
+
+                skip = get_station_param('skip', '%s-%s' % (route, code), default='false') != 'false'
+                if skip:
+                    continue
+
+                statement = 'The next %s-bound %s train%s at %s %s ' % (dest, route, 's' if len(times) > 1 else '', station, 'are' if len(times) > 1 else 'is')
+                statement += ''.join(['%s, ' % diff[1] for diff in times[:-1]])[:-2]
+                statement += ' and' if len(times) > 1 else ''
+                statement += ' %s minutes away.' % times[-1][1]
+                statements.append(statement)
+
+    return ' \n'.join(statements)
+
 
 def get_inferred_lines(sts):
     lines = set()

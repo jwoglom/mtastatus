@@ -16,9 +16,6 @@ python-dotenv = "*"
 gunicorn = "*"
 eventlet = "==0.30.2"
 
-[requires]
-python_version = "3.9"
-
 [scripts]
 mtastatus = "python3 app.py"
 update_destinations = "python3 update_destinations.py"

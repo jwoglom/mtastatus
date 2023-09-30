@@ -22,6 +22,7 @@ export default class StationsList extends React.Component {
         let routes = new Set();
         if (!stations) return [];
 
+        // eslint-disable-next-line
         Object.entries(stations).map(([code, data]) => {
             data.routes.forEach((route) => routes.add(route));
         });

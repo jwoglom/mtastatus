@@ -56,7 +56,7 @@ export default class StationInfo extends React.Component {
             return (<div>Loading...</div>);
         }
         return (
-            <div className="station-info" className={"station-info " + (this.state.showAll ? "showAll" : "notShowAll")} onClick={this.onClick.bind(this)}>
+            <div className={"station-info " + (this.state.showAll ? "showAll" : "notShowAll")} onClick={this.onClick.bind(this)}>
                 
                 <StationHeader
                     name={this.state.name}

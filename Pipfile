@@ -20,3 +20,4 @@ requests = "*"
 [scripts]
 mtastatus = "python3 app.py"
 update_destinations = "python3 update_destinations.py"
+frontend = "bash -c 'cd frontend && REACT_APP_MTASTATUS_ENDPOINT=http://localhost:8400 npm run start'"

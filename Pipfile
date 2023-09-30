@@ -15,6 +15,7 @@ pyjson5 = "*"
 python-dotenv = "*"
 gunicorn = "*"
 eventlet = "==0.30.2"
+requests = "*"
 
 [scripts]
 mtastatus = "python3 app.py"

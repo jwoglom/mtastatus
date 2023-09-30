@@ -4,6 +4,7 @@ from flask import Flask, Response, request, abort, render_template, jsonify, sen
 from flask_cors import CORS
 from underground import SubwayFeed, metadata
 from zoneinfo import ZoneInfo
+import requests
 
 import csv
 import json
@@ -42,9 +43,9 @@ def build_stations_map():
                 label = dest["North_Direction_Label"]
             elif direction == "S":
                 label = dest["South_Direction_Label"]
-            
+
             routes = dest["Daytime_Routes_Array"]
-        
+
         if label == "N":
             label = "Northbound"
         elif label == "S":
@@ -56,7 +57,7 @@ def build_stations_map():
             "destination": label,
             "routes": routes
         }
-    
+
     return stations
 
 stations = build_stations_map()
@@ -273,7 +274,7 @@ def get_inferred_lines(sts):
         if st:
             for r in st["routes"]:
                 lines.add(r)
-    
+
     return lines
 
 @app.route('/api/stations/<path:stations>')
@@ -285,6 +286,144 @@ def api_stations_route(stations):
 @app.route('/api/stations_list')
 def api_stations_list_route():
     return jsonify(stations)
+
+SUBWAY_ALERTS_JSON = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts.json'
+def fetch_alerts_json():
+    r = requests.get(SUBWAY_ALERTS_JSON, headers={'x-api-key': os.getenv('MTA_API_KEY')})
+    if r.status_code // 100 != 2:
+        raise RuntimeError(f'HTTP {r.status_code} from subway alerts JSON: {r.text}')
+
+    return r.json()
+
+def get_alerts():
+    def parse_translations(obj):
+        trans = {}
+        for tr in obj['translation']:
+            trans[tr.get('language')] = tr.get('text')
+
+        return trans
+
+    def parse_entities(entities):
+        affected_lines = []
+        affected_stations = []
+        for obj in entities:
+            if obj.get('agency_id', '') != 'MTASBWY':
+                continue
+            if 'route_id' in obj:
+                affected_lines.append(obj['route_id'])
+            if 'stop_id' in obj:
+                affected_stations.append(obj['stop_id'])
+
+        return affected_lines, affected_stations
+
+
+    raw = fetch_alerts_json()
+    alerts = []
+    ts = raw['header']['timestamp']
+    for entity in raw.get('entity', []):
+        alert_type = None
+        display_before_active = 0
+        active_period_text = None
+        station_alternatives = None
+
+        mercury_alert = entity['alert'].get('transit_realtime.mercury_alert')
+        if mercury_alert:
+            alert_type = mercury_alert.get('alert_type')
+            display_before_active = mercury_alert.get('display_before_active', 0)
+
+            active_period_text_ = mercury_alert.get('human_readable_active_period')
+            if active_period_text_:
+                active_period_text = parse_translations(active_period_text_)
+
+            station_alternatives = []
+            station_alternatives_ = mercury_alert.get('station_alternative', [])
+            for st in station_alternatives_:
+                affected_lines = None
+                affected_stations = None
+                affected_entity_ = st.get('affected_entity')
+                if affected_entity_:
+                    affected_lines, affected_stations = parse_entities([affected_entity_])
+
+                notes = None
+                notes_ = st.get('notes')
+                if notes_:
+                    notes = parse_translations(notes_)
+
+                station_alternatives.append({
+                    'affected_lines': affected_lines,
+                    'affected_stations': affected_stations,
+                    'notes': notes
+                })
+
+
+
+        is_active = False
+        for pd in entity['alert'].get('active_period', []):
+            if 'end' in pd:
+                if pd['start'] - display_before_active <= ts and ts <= pd['end']:
+                    is_active = True
+            elif pd['start'] - display_before_active <= ts:
+                is_active = True
+        if not is_active:
+            continue
+
+        affected_lines, affected_stations = parse_entities(entity['alert'].get('informed_entity', []))
+
+        header_text = None
+        header_text_ = entity['alert'].get('header_text')
+        if header_text_:
+            header_text = parse_translations(header_text_)
+
+        description_text = None
+        description_text_ = entity['alert'].get('description_text')
+        if description_text_:
+            description_text = parse_translations(description_text_)
+
+        parsed = {
+            'alert_type': alert_type,
+            'active_period_text': active_period_text,
+            'is_active': is_active,
+            'affected_lines': affected_lines,
+            'affected_stations': affected_stations,
+            'header_text': header_text,
+            'description_text': description_text,
+            'station_alternatives': station_alternatives
+        }
+        alerts.append(parsed)
+
+    return alerts
+
+@app.route('/api/alerts')
+def api_alerts_route():
+    return jsonify(get_alerts())
+
+def filter_alerts(alerts, filter_lines=None, filter_stations=None):
+    def arr_includes(base, query):
+        return any([q in base for q in (query or [])])
+
+    out = []
+    for a in alerts:
+        include = False
+        if arr_includes(a.get('affected_lines', []), filter_lines):
+            include = True
+        if arr_includes(a.get('affected_stations', []), filter_stations):
+            include = True
+        if include:
+            out.append(a)
+
+    return out
+
+@app.route('/api/alerts/lines/<path:lines>')
+def api_alerts_lines_route(lines):
+    return jsonify(filter_alerts(get_alerts(), filter_lines=lines.split(',')))
+
+@app.route('/api/alerts/stations/<path:stations>')
+def api_alerts_stations_route(stations):
+    return jsonify(filter_alerts(get_alerts(), filter_stations=stations.split(',')))
+
+@app.route('/api/alerts/lines/<path:lines>/stations/<path:stations>')
+def api_alerts_lines_stations_route(lines, stations):
+    return jsonify(filter_alerts(get_alerts(), filter_lines=lines.split(','), filter_stations=stations.split(',')))
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

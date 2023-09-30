@@ -6,6 +6,7 @@ from underground import SubwayFeed, metadata
 from zoneinfo import ZoneInfo
 import requests
 
+import time
 import csv
 import json
 import os
@@ -176,7 +177,10 @@ def sort_stops(stops):
 @app.route('/api/lines/<path:lines>/stations/<path:stations>')
 def api_line_stations_route(lines, stations):
     sts = process_stations(stations.split(','))
-    return jsonify(get_stations(lines.split(','), sts))
+    data = get_stations(lines.split(','), sts)
+    if request.args.get('alerts'):
+        data = augment_alerts(data)
+    return jsonify(data)
 
 @app.route('/api/lines/<path:lines>/stations/<path:stations>/tts')
 def api_line_stations_tts_route(lines, stations):
@@ -281,19 +285,34 @@ def get_inferred_lines(sts):
 def api_stations_route(stations):
     sts = process_stations(stations.split(','))
     inferred_lines = get_inferred_lines(sts)
-    return jsonify(get_stations(inferred_lines, sts))
+    data = get_stations(inferred_lines, sts)
+    if request.args.get('alerts'):
+        data = augment_alerts(data)
+    return jsonify(data)
 
 @app.route('/api/stations_list')
 def api_stations_list_route():
     return jsonify(stations)
 
 SUBWAY_ALERTS_JSON = 'https://api-endpoint.mta.info/Dataservice/mtagtfsfeeds/camsys%2Fsubway-alerts.json'
+_alerts_json = None
+_alerts_json_ts = None
 def fetch_alerts_json():
+    global _alerts_json, _alerts_json_ts
+
+    if _alerts_json and time.time() - _alerts_json_ts <= 30:
+        return _alerts_json
+
     r = requests.get(SUBWAY_ALERTS_JSON, headers={'x-api-key': os.getenv('MTA_API_KEY')})
     if r.status_code // 100 != 2:
         raise RuntimeError(f'HTTP {r.status_code} from subway alerts JSON: {r.text}')
 
-    return r.json()
+    out = r.json()
+    _alerts_json = out
+    _alerts_json_ts = time.time()
+
+    return out
+
 
 def get_alerts():
     def parse_translations(obj):
@@ -393,11 +412,8 @@ def get_alerts():
 
     return alerts
 
-@app.route('/api/alerts')
-def api_alerts_route():
-    return jsonify(get_alerts())
-
-def filter_alerts(alerts, filter_lines=None, filter_stations=None):
+def filter_alerts(filter_lines=None, filter_stations=None):
+    alerts = get_alerts()
     def arr_includes(base, query):
         return any([q in base for q in (query or [])])
 
@@ -413,17 +429,29 @@ def filter_alerts(alerts, filter_lines=None, filter_stations=None):
 
     return out
 
+# input data shape: {"stationID": {"station": .., "stops": ..}}
+def augment_alerts(data):
+    for station_id, vals in data.items():
+        lines = list(set([i["trip"]["route_id"] for i in vals["stops"]]))
+        vals["alerts"] = filter_alerts(filter_stations=[station_id], filter_lines=lines)
+
+    return data
+
+@app.route('/api/alerts')
+def api_alerts_route():
+    return jsonify(get_alerts())
+
 @app.route('/api/alerts/lines/<path:lines>')
 def api_alerts_lines_route(lines):
-    return jsonify(filter_alerts(get_alerts(), filter_lines=lines.split(',')))
+    return jsonify(filter_alerts(filter_lines=lines.split(',')))
 
 @app.route('/api/alerts/stations/<path:stations>')
 def api_alerts_stations_route(stations):
-    return jsonify(filter_alerts(get_alerts(), filter_stations=stations.split(',')))
+    return jsonify(filter_alerts(filter_stations=stations.split(',')))
 
 @app.route('/api/alerts/lines/<path:lines>/stations/<path:stations>')
 def api_alerts_lines_stations_route(lines, stations):
-    return jsonify(filter_alerts(get_alerts(), filter_lines=lines.split(','), filter_stations=stations.split(',')))
+    return jsonify(filter_alerts(filter_lines=lines.split(','), filter_stations=stations.split(',')))
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')

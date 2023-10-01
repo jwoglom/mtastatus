@@ -2,7 +2,7 @@ import React from "react";
 import RouteIcon from "../components/RouteIcon";
 
 export function renderText(text) {
-    const lines = ["A", "C", "E", "B", "D", "F", "M", "G", "J", "Z", "N", "Q", "R", "W", "L", "1", "2", "3", "4", "5", "6", "7", "SIR"];
+    const lines = ["A", "C", "E", "B", "D", "F", "M", "G", "J", "Z", "N", "Q", "R", "W", "L", "1", "2", "3", "4", "5", "6", "7", "SIR", "H", "FS", "FX", "5X", "6X", "7X", "GS", "SI"];
     let splits = [];
     for (let i=0; i<lines.length; i++) {
         if (text.indexOf('['+lines[i]+']') !== -1) {

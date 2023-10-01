@@ -1,6 +1,10 @@
-export async function fetchStationInfo(stations) {
+export async function fetchStationInfo(stations, options) {
     const endpoint = process.env.REACT_APP_MTASTATUS_ENDPOINT;
-    const req = await fetch(endpoint+'/api/stations/'+stations.join(','));
+    let query = '';
+    if (options && options.alerts) {
+        query += 'alerts=1&';
+    }
+    const req = await fetch(endpoint+'/api/stations/'+stations.join(',')+'?' + query);
     const data = await req.json();
     console.log("fetchStationInfo:", stations, data);
 
@@ -18,7 +22,8 @@ export async function fetchStationInfo(stations) {
             routes: data[station]["station"]["routes"],
             displayedRoutes: makeDisplayedRoutes(stops),
             stops: stops,
-            updateTime: date
+            updateTime: date,
+            alerts: data[station]["alerts"]
         };
     });
 

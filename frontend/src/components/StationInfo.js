@@ -5,6 +5,7 @@ import { filterToShownStops } from "../utils/filterShownStop";
 import mergeStationInfo from "../utils/mergeStationInfo";
 import StationHeader from "./StationHeader";
 import StationStop from "./StationStop";
+import AlertsSummary from "./AlertsSummary";
 
 export default class StationInfo extends React.Component {
     state = {
@@ -38,7 +39,7 @@ export default class StationInfo extends React.Component {
     async loadData() {
         const station = this.props.station;
 
-        let info = await fetchStationInfo([station]);
+        let info = await fetchStationInfo([station], {alerts: this.props.showAlerts});
         if (info[station]) {
             this.setState(info[station]);
         } else {
@@ -79,6 +80,11 @@ export default class StationInfo extends React.Component {
                 {this.state.stops.length === 0 && <p>
                     There are no trains scheduled.
                 </p>}
+                
+                {this.props.showAlerts && <React.Fragment>
+                    <p />
+                    <AlertsSummary alerts={this.state.alerts} />
+                </React.Fragment>}
 
                 {this.props.showLastUpdated &&
                     <p>Last updated: {this.state.updateTime}</p>}
@@ -93,5 +99,6 @@ StationInfo.defaultProps = {
     maxCount: 10,
     showLastUpdated: true,
     shortUnits: false,
-    showTime: false
+    showTime: false,
+    showAlerts: false
 }

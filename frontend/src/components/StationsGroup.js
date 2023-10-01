@@ -22,7 +22,7 @@ export default class StationsGroup extends React.Component {
 
     async loadData() {
         let individualStations = this.props.stations.replace(/ /g,'+').split(/;|,|\+|\|/);
-        let info = await fetchStationInfo(individualStations);
+        let info = await fetchStationInfo(individualStations, {alerts: this.props.stationInfoProps.showAlerts});
         console.debug("setting sessionData:", info);
         this.setState({stationData: info});
     }

@@ -81,6 +81,7 @@ function innerMerge(codes, info) {
         routes: routes,
         displayedRoutes: displayedRoutes,
         stops: stops,
-        updateTime: infos[0].updateTime
+        updateTime: infos[0].updateTime,
+        alerts: infos[0].alerts
     };
 }

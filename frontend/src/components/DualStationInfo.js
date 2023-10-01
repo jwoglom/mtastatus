@@ -5,6 +5,7 @@ import { filterToShownStops } from "../utils/filterShownStop";
 import mergeStationInfo from "../utils/mergeStationInfo";
 import StationHeader from "./StationHeader";
 import StationStop from "./StationStop";
+import AlertsSummary from "./AlertsSummary";
 
 export default class DualStationInfo extends React.Component {
     state = {
@@ -55,7 +56,7 @@ export default class DualStationInfo extends React.Component {
         const station = this.props.nbStation;
 
         try {
-            let info = await fetchStationInfo([station]);
+            let info = await fetchStationInfo([station], {alerts: this.props.showAlerts});
             if (info[station]) {
                 this.setState({...this.state, nb: info[station]});
             } else {
@@ -70,7 +71,7 @@ export default class DualStationInfo extends React.Component {
         const station = this.props.sbStation;
 
         try {
-            let info = await fetchStationInfo([station]);
+            let info = await fetchStationInfo([station], {alerts: this.props.showAlerts});
             if (info[station]) {
                 this.setState({...this.state, sb: info[station]});
             } else {
@@ -165,6 +166,11 @@ export default class DualStationInfo extends React.Component {
                 {stops.length === 0 && <p>
                     There are no trains scheduled.
                 </p>}
+                
+                {this.props.showAlerts && <React.Fragment>
+                    <p />
+                    <AlertsSummary alerts={this.state.nb.alerts} />
+                </React.Fragment>}
 
                 {this.props.showLastUpdated &&
                     <p>Last updated: {this.updateTime()}</p>}
@@ -179,5 +185,6 @@ DualStationInfo.defaultProps = {
     maxCount: 10,
     showLastUpdated: true,
     shortUnits: false,
-    showTime: false
+    showTime: false,
+    showAlerts: false
 }

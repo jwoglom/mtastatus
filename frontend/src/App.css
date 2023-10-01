@@ -51,6 +51,10 @@
   opacity: 0.3;
 }
 
+.bullet.inlineBullet {
+  margin-top: -3px;
+}
+
 .header-routes .bullet {
   padding-right: 2px;
 }

@@ -11,21 +11,24 @@ export default function buildSearchParamsProps(q) {
     }
 
     function process(q, p, type) {
-        if (q.get(p)) {
+        function processCast(p) {
             if (type === 'int') {
-                stationInfoProps[p] = parseInt(q.get(p));
+                return parseInt(q.get(p));
             } else if (type === 'bool') {
-                stationInfoProps[p] = q.get(p) !== 'false';
+                return q.get(p) !== 'false';
             } else {
-                stationInfoProps[p] = q.get(p);
+                return q.get(p);
             }
+        }
+        if (q.get(p)) {
+            stationInfoProps[p] = processCast(p);
         }
         q.forEach((val, key) => {
             if (key.startsWith(p+'[')) {
                 let forCode = key.split('[')[1].split(']')[0];
                 ret['stationInfoPropsPerStation'] = ret['stationInfoPropsPerStation'] || {};
                 ret['stationInfoPropsPerStation'][forCode] = ret['stationInfoPropsPerStation'][forCode] || {};
-                ret['stationInfoPropsPerStation'][forCode][p] = parseInt(q.get(key));
+                ret['stationInfoPropsPerStation'][forCode][p] = processCast(key);
             }
         })
     }

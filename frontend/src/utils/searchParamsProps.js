@@ -15,7 +15,7 @@ export default function buildSearchParamsProps(q) {
             if (type === 'int') {
                 return parseInt(q.get(p));
             } else if (type === 'bool') {
-                return q.get(p) !== 'false';
+                return q.get(p) !== 'false' && q.get(p) !== '0';
             } else if (type === 'list') {
                 return (q.get(p) || '').split(',');
             } else {

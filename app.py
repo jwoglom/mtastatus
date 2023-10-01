@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 
-from flask import Flask, Response, request, abort, render_template, jsonify, send_from_directory
+from flask import Flask, Response, request, abort, render_template, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 from underground import SubwayFeed, metadata
 from zoneinfo import ZoneInfo
 import requests
+import urllib.parse
 
 import time
 import csv
@@ -182,8 +183,7 @@ def api_line_stations_route(lines, stations):
         data = augment_alerts(data)
     return jsonify(data)
 
-@app.route('/api/lines/<path:lines>/stations/<path:stations>/tts')
-def api_line_stations_tts_route(lines, stations):
+def stations_tts_text(lines, stations):
     def get_station_param(name, st, default='0'):
         for_st = request.args.get('%s[%s]' % (name, st), default)
         if for_st != default:
@@ -217,7 +217,7 @@ def api_line_stations_tts_route(lines, stations):
             elif direction == 'S':
                 dest = get_station_param('southLabel', code, default='South')
 
-        count = int(get_station_param('count', code, default='0'))
+        count = int(get_station_param('count', code, default='1'))
         min_time_mins = int(get_station_param('minTimeMinutes', code, default='0'))
         merge_lines = get_station_param('mergeLines', code, default='true') == 'true'
 
@@ -270,6 +270,13 @@ def api_line_stations_tts_route(lines, stations):
 
     return ' \n'.join(statements)
 
+@app.route('/api/lines/<path:lines>/stations/<path:stations>/tts')
+def api_line_stations_tts_route(lines, stations):
+    return stations_tts_text(lines, stations)
+
+@app.route('/api/lines/<path:lines>/stations/<path:stations>/tts.wav')
+def api_line_stations_tts_wav_route(lines, stations):
+    return redirect("https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=" + urllib.parse.quote_plus(stations_tts_text(lines, stations)))
 
 def get_inferred_lines(sts):
     lines = set()

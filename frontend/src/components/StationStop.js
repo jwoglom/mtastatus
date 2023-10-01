@@ -27,11 +27,19 @@ export default class StationStop extends React.Component {
                 let addlMins = totalMins - hrs*60;
                 let ret = '';
                 if (hrs === 1) {
-                    ret = hrs+' '+unit+' '+addlMins+' min';
+                    if (props.shortUnits) {
+                        ret = hrs+''+unit+' '+addlMins+'m';
+                    } else {
+                        ret = hrs+' '+unit+' '+addlMins+' min';
+                    }
                 } else {
-                    ret = hrs+' '+unit+'s '+addlMins+' min';
+                    if (props.shortUnits) {
+                        ret = hrs+''+unit+'s '+addlMins+'m';
+                    } else {
+                        ret = hrs+' '+unit+'s '+addlMins+' min';
+                    }
                 }
-                if (addlMins !== 1) {
+                if (addlMins !== 1 && !props.shortUnits) {
                     ret += 's';
                 }
                 return ret;

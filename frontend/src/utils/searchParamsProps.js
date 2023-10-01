@@ -37,6 +37,7 @@ export default function buildSearchParamsProps(q) {
     process(q, 'shortUnits', 'bool');
     process(q, 'showTime', 'bool');
     process(q, 'showAlerts', 'bool');
+    process(q, 'condensedAlerts', 'bool');
 
     if (Object.keys(stationInfoProps).length > 0) {
         ret['stationInfoProps'] = stationInfoProps;

@@ -83,7 +83,7 @@ export default class StationInfo extends React.Component {
                 
                 {this.props.showAlerts && <React.Fragment>
                     <p />
-                    <AlertsSummary alerts={this.state.alerts} />
+                    <AlertsSummary alerts={this.state.alerts} condensed={this.props.condensedAlerts ? !this.state.showAll : false} />
                 </React.Fragment>}
 
                 {this.props.showLastUpdated &&
@@ -100,5 +100,6 @@ StationInfo.defaultProps = {
     showLastUpdated: true,
     shortUnits: false,
     showTime: false,
-    showAlerts: false
+    showAlerts: false,
+    condensedAlerts: true
 }

@@ -120,6 +120,10 @@ You can specify via GET arguments:
 * minTimeMinutes: hides trains which have ETAs shorter than this number of minutes for each station
 * maxTimeMinutes: hides trains which have ETAs longer than this number of minutes for each station
 * maxCount: hides more than the given number of ETAs for each station
+* showTime: show the estimated arrival clock time next to the relative time estimation
+* showAlerts: show station alerts underneath arrival times
+* condensedAlerts: only show the title of each alert and not the full contents
+* shortUnits: show shorter unit texts (e.g. "mins" not "minutes")
 
 
 

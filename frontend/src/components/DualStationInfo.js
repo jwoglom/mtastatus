@@ -169,7 +169,7 @@ export default class DualStationInfo extends React.Component {
                 
                 {this.props.showAlerts && <React.Fragment>
                     <p />
-                    <AlertsSummary alerts={this.state.nb.alerts} condensed={this.props.condensedAlerts ? !this.state.showAll : false} />
+                    <AlertsSummary alerts={this.state.nb.alerts} condensed={this.props.condensedAlerts ? !this.state.showAll : false} hideAlertIds={this.props.hideAlertIds} />
                 </React.Fragment>}
 
                 {this.props.showLastUpdated &&
@@ -187,5 +187,6 @@ DualStationInfo.defaultProps = {
     shortUnits: false,
     showTime: false,
     showAlerts: false,
-    condensedAlerts: true
+    condensedAlerts: true,
+    hideAlertIds: []
 }

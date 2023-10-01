@@ -16,6 +16,8 @@ export default function buildSearchParamsProps(q) {
                 return parseInt(q.get(p));
             } else if (type === 'bool') {
                 return q.get(p) !== 'false';
+            } else if (type === 'list') {
+                return (q.get(p) || '').split(',');
             } else {
                 return q.get(p);
             }
@@ -41,6 +43,7 @@ export default function buildSearchParamsProps(q) {
     process(q, 'showTime', 'bool');
     process(q, 'showAlerts', 'bool');
     process(q, 'condensedAlerts', 'bool');
+    process(q, 'hideAlertIds', 'list');
 
     if (Object.keys(stationInfoProps).length > 0) {
         ret['stationInfoProps'] = stationInfoProps;

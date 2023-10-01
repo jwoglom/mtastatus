@@ -399,6 +399,7 @@ def get_alerts():
             description_text = parse_translations(description_text_)
 
         parsed = {
+            'id': entity['id'],
             'alert_type': alert_type,
             'active_period_text': active_period_text,
             'is_active': is_active,
